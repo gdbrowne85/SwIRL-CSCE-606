@@ -118,7 +118,7 @@
                                 <i class="fas fa-trash-alt"></i>
                             <% end %>
                         </div>
-                    </div>                    
+                    </div>                  
                     <div id="event-content-<%= event.id %>" class="event-content">
                         <h2>Event Details:</h2>
                         <div>
@@ -203,6 +203,27 @@
             } else {
                 eventContent.style.display = "none";
             }
+        }
+    </script>
+    <script>
+        function startCountdown(eventId, reminderTime) {
+            var eventStatus = document.getElementById("event-status-" + eventId);
+            var countdown = reminderTime * 60; // Convert minutes to seconds
+            var intervalId = setInterval(function () {
+                var minutes = Math.floor(countdown / 60);
+                var seconds = countdown % 60;
+                eventStatus.innerHTML = "Reminder in: " + minutes + "m " + seconds + "s";
+                if (--countdown < 0) {
+                    clearInterval(intervalId);
+                    eventStatus.innerHTML = "Send Reminder Email";
+                    // Trigger notification to send reminder email
+                    sendReminderNotification();
+                }
+            }, 1000); // Update every second
+        }
+
+        function sendReminderNotification() {
+            alert("Send Reminder Email Notification");
         }
     </script>
 </body>
