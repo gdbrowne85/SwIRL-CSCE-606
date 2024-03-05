@@ -32,7 +32,7 @@ class EventsController < ApplicationController
     start_time = event_params[:start_time]
     end_time = event_params[:end_time]
     max_capacity = event_params[:max_capacity]
-
+    reminder_time = event_params[:reminder_time]
 
     if date.nil?
       date = Time.now
@@ -47,7 +47,8 @@ class EventsController < ApplicationController
       date:         date,
       start_time:   start_time,
       end_time:     end_time,
-      max_capacity: max_capacity
+      max_capacity: max_capacity,
+      reminder_time: reminder_time
     )
 
     if csv_file.present? && File.extname(csv_file.path) == '.csv'
@@ -124,6 +125,7 @@ class EventsController < ApplicationController
     start_time = event_params[:start_time]
     end_time = event_params[:end_time]
     max_capacity = event_params[:max_capacity]
+    reminder_time = event_params[:reminder_time]
     csv_file = event_params[:csv_file]
 
     event_info = @event.event_info
@@ -283,7 +285,7 @@ class EventsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def event_params
-    params.require(:event).permit(:name, :venue, :date, :start_time, :end_time, :max_capacity, :csv_file, time_slots_attributes: [:id, :date, :start_time, :end_time, :_destroy])
+    params.require(:event).permit(:name, :venue, :date, :start_time, :end_time, :max_capacity, :reminder_time, :csv_file, time_slots_attributes: [:id, :date, :start_time, :end_time, :_destroy])
 
   end
 end

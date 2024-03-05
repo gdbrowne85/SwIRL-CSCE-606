@@ -179,8 +179,9 @@
                 <div>
                     <%= form.label :reminder_time, "Reminder Time (HH:MM)" %>
                     <%= form.text_field :reminder_time, class: 'form-input', id: 'ReminderTime',
-                        placeholder: 'HH:MM', pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$", required: true,
-                        title: "Please enter a valid time in the format HH:MM (24-hour clock)" %>
+                        pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$", required: true,
+                        title: "Please enter a valid time in the format HH:MM (24-hour clock)",
+                        value: @event.event_info.present? ? @event.event_info.reminder_time : "", placeholder:"Reminder Time"%>
                 </div>
                 <div>
                     <%= form.label :csv_file, "Upload List of Emails (Excel/CSV with column labels Email and Priority)" %>

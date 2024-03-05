@@ -149,10 +149,11 @@
                             <% if event.event_info.max_capacity.present? %>
                                 <h3>Max Capacity: <%= event.event_info&.max_capacity %></h3>
                             <% end %>
+                            <h3>Reminder Time: <%= event.event_info&.reminder_time %></h3>
                         </div>
                         <br> <!-- Line break for spacing -->
                         <div>
-                            <h3>Send Emails: <%= link_to 'Send Emails', invite_attendees_path(event) %></h3>
+                            <h3>Send Emails: <%= link_to 'Send Emails', invite_attendees_path(event), onclick: "return startCountdown(event.event_info&.reminder_time)" %></h3>
                         </div>
                         <div>
                             <h3>Send Reminder Email: <%= link_to 'Send Reminder Email', send_reminders_to_attendees_path(event) %></h3>
@@ -206,26 +207,35 @@
         }
     </script>
     <script>
-        function startCountdown(eventId, reminderTime) {
-            var eventStatus = document.getElementById("event-status-" + eventId);
+        function startCountdown(reminderTime) {
+            var countdownElement = document.getElementById("countdown-timer");
             var countdown = reminderTime * 60; // Convert minutes to seconds
+
+            // Update countdown every 10 seconds
             var intervalId = setInterval(function () {
                 var minutes = Math.floor(countdown / 60);
                 var seconds = countdown % 60;
-                eventStatus.innerHTML = "Reminder in: " + minutes + "m " + seconds + "s";
+                countdownElement.innerHTML = "Reminder in: " + minutes + "m " + seconds + "s";
                 if (--countdown < 0) {
                     clearInterval(intervalId);
-                    eventStatus.innerHTML = "Send Reminder Email";
+                    countdownElement.innerHTML = "Send Reminder Email";
                     // Trigger notification to send reminder email
                     sendReminderNotification();
                 }
-            }, 1000); // Update every second
+            }, 10000); // Update every 10 seconds
         }
 
         function sendReminderNotification() {
             alert("Send Reminder Email Notification");
         }
+
+        document.getElementById("send-emails-btn").addEventListener("click", function() {
+            // Retrieve the reminder time for the event
+            var reminderTime = <%= event.reminder_time || 0 >;
+            startCountdown(reminderTime);
+        });
     </script>
+
 </body>
 
 </html>

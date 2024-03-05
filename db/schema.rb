@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_10_210823) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_05_001728) do
   create_table "accounts", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -73,6 +73,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_10_210823) do
     t.datetime "updated_at", null: false
     t.time "end_time"
     t.integer "max_capacity"
+    t.datetime "reminder_time", precision: nil
   end
 
   create_table "events", force: :cascade do |t|
