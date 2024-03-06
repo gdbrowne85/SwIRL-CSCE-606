@@ -149,10 +149,7 @@
                             <% if event.event_info.max_capacity.present? %>
                                 <h3>Max Capacity: <%= event.event_info&.max_capacity %></h3>
                             <% end %>
-                            <% if event.event_info.reminder_time.present? %>
-                                <h3>Target Time: <%= event.event_info&.reminder_time %></h3>
-                            <% end %>
-
+                            <br>
                             <%seconds_until_target_time= event.event_info&.reminder_time.to_i - Time.now.to_i%>
 
                             <%= content_tag(:h1, "Countdown", data:{
