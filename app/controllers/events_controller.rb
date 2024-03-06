@@ -4,10 +4,15 @@ require 'securerandom'
 
 
 class EventsController < ApplicationController
+  include EventsHelper
   before_action :set_event, only: %i[show edit update destroy]
 
   # GET /events/1 or /events/1.json
   def show; end
+
+  def index
+    @events = Event.all
+  end
 
   # GET /events/new
   def new
