@@ -150,9 +150,16 @@
                                 <h3>Max Capacity: <%= event.event_info&.max_capacity %></h3>
                             <% end %>
                             <% if event.event_info.reminder_time.present? %>
-                                <% output_time = EventsHelper.print_reminder_time(event.event_info) %>
-                                <h3>Time Remaining: <%= output_time %></h3>
+                                <h3>Target Time: <%= event.event_info&.reminder_time %></h3>
                             <% end %>
+
+                            <%seconds_until_target_time= event.event_info&.reminder_time.to_i - Time.now.to_i%>
+
+                            <%= content_tag(:h1, "Countdown", data:{
+                                controller: "countdown",
+                                countdown_target: "countdown",
+                                seconds_until_end_value: seconds_until_target_time
+                            })%>
                         </div>
                         <br> <!-- Line break for spacing -->
                         <div>
