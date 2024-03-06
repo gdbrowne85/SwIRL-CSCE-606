@@ -96,19 +96,20 @@ Rails.application.configure do
   config.action_mailer.perform_caching = true
   config.action_mailer.delivery_method = :smtp
 
-  host = "gmail.com"
-  user_name = Rails.application.credentials.USER_NAME
-  password = Rails.application.credentials.PASSWORD
-  config.action_mailer.default_url_options = { host: host, protocol:'http' }
+  host = "swirlskehdule-f316b598c688.herokuapp.com"
+  user_name = Rails.application.credentials.user_name
+  password = Rails.application.credentials.app_password
+  config.action_mailer.default_url_options = { host: host, protocol: 'https' } # Adjusted to 'https' based on your host URL
   config.action_mailer.smtp_settings = {
     address: 'smtp.gmail.com',
     port: 587,
     domain: host,
-    user_name: user_name,
-    password: password,
+    user_name: "skhedulesp24@gmail.com",
+    password: "xrxmxflrlociuwwy",
     authentication: :plain,
     enable_starttls_auto: true
-  }
+    }
+
 
 
 end

@@ -14,6 +14,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ] # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "bootsnap", require: false # Reduces boot times through caching; required in config/boot.rb
+gem 'aws-sdk-rails'
 gem 'rake', '13.1.0'
 
 #Use password_digest 
@@ -41,6 +42,7 @@ group :development, :test do
   gem 'rubycritic', require: false
   gem 'dotenv-rails'
   gem "rails-erd"
+  gem 'factory_bot_rails'
 end
 
 group :test do
