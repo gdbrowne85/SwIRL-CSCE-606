@@ -21,7 +21,7 @@ export default class extends Controller {
 
     if (secondsRemaining <= 0){
       clearInterval(this.countdown);
-      this.countdownTarget.innerHTML = "Reminder Time";
+      this.countdownTarget.innerHTML = "Send Reminder Email";
       return;
     }
 
