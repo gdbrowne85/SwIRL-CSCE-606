@@ -2,4 +2,3 @@
 
 module EventsHelper
 end
-  
