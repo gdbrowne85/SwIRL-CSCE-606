@@ -1,7 +1,7 @@
 <!-- app/views/users/new.html.erb -->
 <h1>Sign Up</h1>
 
-<%= form_with(model: @user, url: signup_path) do |form| %>
+<%= form_with(model: @user, url: signup_path, id: 'signup_form') do |form| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -14,13 +14,60 @@
   <% end %>
 
   <%= form.label :email %>
-  <%= form.text_field :email %>
+  <%= form.text_field :email, id: 'email_field' %>
+  <span id="email_error" style="color: red; display: none;">Email is already registered</span>
 
   <%= form.label :password %>
-  <%= form.password_field :password %>
+  <%= form.password_field :password, id: 'password_field' %>
+  <span id="password_error" style="color: red; display: none;">Password must be at least 6 characters long</span>
 
   <%= form.label :password_confirmation %>
-  <%= form.password_field :password_confirmation %>
+  <%= form.password_field :password_confirmation, id: 'password_confirmation_field' %>
+  <span id="password_confirmation_error" style="color: red; display: none;">Password confirmation doesn't match</span>
 
-  <%= form.submit "Sign Up" %>
+  <%= form.submit "Sign Up", onclick: "return validateForm();" %>
 <% end %>
+
+<script>
+  function validateForm() {
+    var email = document.getElementById("email_field").value;
+    var password = document.getElementById("password_field").value;
+    var passwordConfirmation = document.getElementById("password_confirmation_field").value;
+
+    // Check if password length is less than 6
+    if (password.length < 6) {
+      document.getElementById("password_error").style.display = "block";
+      return false;
+    } else {
+      document.getElementById("password_error").style.display = "none";
+    }
+
+    // Check if password and password confirmation match
+    if (password !== passwordConfirmation) {
+      document.getElementById("password_confirmation_error").style.display = "block";
+      return false;
+    } else {
+      document.getElementById("password_confirmation_error").style.display = "none";
+    }
+
+    // Perform AJAX request to check if email is already registered
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.exists) {
+            document.getElementById("email_error").style.display = "block";
+          } else {
+            document.getElementById("email_error").style.display = "none";
+            document.getElementById("signup_form").submit();
+          }
+        }
+      }
+    };
+    xhr.open("GET", "/check_email?email=" + encodeURIComponent(email), true);
+    xhr.send();
+
+    return false;
+  }
+</script>
