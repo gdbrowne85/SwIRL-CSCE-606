@@ -4,15 +4,10 @@ require 'securerandom'
 
 
 class EventsController < ApplicationController
-  include EventsHelper
   before_action :set_event, only: %i[show edit update destroy]
 
   # GET /events/1 or /events/1.json
   def show; end
-
-  def index
-    @events = Event.all
-  end
 
   # GET /events/new
   def new
@@ -52,8 +47,8 @@ class EventsController < ApplicationController
       date:         date,
       start_time:   start_time,
       end_time:     end_time,
-      max_capacity: max_capacity,
-      reminder_time: reminder_time
+      reminder_time: reminder_time,
+      max_capacity: max_capacity
     )
 
     if csv_file.present? && File.extname(csv_file.path) == '.csv'
