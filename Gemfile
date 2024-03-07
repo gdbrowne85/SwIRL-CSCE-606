@@ -42,6 +42,7 @@ group :development, :test do
   gem 'rubycritic', require: false
   gem 'dotenv-rails'
   gem "rails-erd"
+  gem 'google-apis-calendar_v3', '~> 0.38.0'
   gem 'factory_bot_rails'
 end
 
