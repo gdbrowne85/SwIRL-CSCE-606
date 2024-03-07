@@ -14,6 +14,14 @@ class UsersController < ApplicationController
         render :new
       end
     end
+
+    def check_email
+      email = params[:email]
+      user = User.find_by(email: email)
+      exists = user.present?
+  
+      render json: { exists: exists }
+    end
   
     private
   

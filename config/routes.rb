@@ -88,4 +88,5 @@ Rails.application.routes.draw do
   get 'eventdashboard', to: 'events#eventdashboard'
   get 'invite_attendees/:id', to: 'events#invite_attendees', as: 'invite_attendees'
   get 'send_reminders_to_attendees/:id', to: 'events#send_reminders_to_attendees', as: 'send_reminders_to_attendees'
+  get '/check_email', to: 'users#check_email'
 end
