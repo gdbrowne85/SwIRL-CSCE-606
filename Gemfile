@@ -14,6 +14,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ] # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "bootsnap", require: false # Reduces boot times through caching; required in config/boot.rb
+gem 'aws-sdk-rails'
 
 #Use password_digest 
 #because Rails has a built-in method called has_secure_password which utilizes the bcrypt gem to handle password hashing. 
@@ -40,6 +41,7 @@ group :development, :test do
   gem 'dotenv-rails'
   gem "rails-erd"
   gem 'google-apis-calendar_v3', '~> 0.38.0'
+  gem 'factory_bot_rails'
 end
 
 group :test do
