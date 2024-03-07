@@ -31,13 +31,11 @@ class CalendarsController < ApplicationController
                 start_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.start_time}:00").strftime("%Y-%m-%dT%H:%M:%S.%LZ")
                 end_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.end_time}:00").strftime("%Y-%m-%dT%H:%M:%S.%LZ")
 
-                puts start_datetime
-                
                 new_event = Google::Apis::CalendarV3::Event.new(
-                start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_datetime),
-                end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_datetime),
-                location: @event_info.venue,
-                summary: @event_info.name
+                    start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_datetime),
+                    end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_datetime),
+                    location: @event_info.venue,
+                    summary: @event_info.name
                 )
 
                 if @event.attendee_infos.present?
@@ -48,7 +46,6 @@ class CalendarsController < ApplicationController
                     new_event.attendees = attendees
                 end
 
-
                 calendar_id = params[:calendar_id] || 'primary'
                 service.insert_event(calendar_id, new_event)
 
@@ -56,13 +53,10 @@ class CalendarsController < ApplicationController
             
                 redirect_to eventsList_url
 
-            rescue Google::Apis::AuthorizationError
-                response = client.refresh!
-                session[:authorization] = session[:authorization].merge(response)
-                retry
+            rescue Google::Apis::Error => e
+                redirect_to redirect_path
             end
-        
-        else 
+        else
             redirect_to redirect_path
             return
         end

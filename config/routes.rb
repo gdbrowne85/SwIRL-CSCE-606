@@ -76,17 +76,11 @@ Rails.application.routes.draw do
   get 'signup', to: 'users#new'
   post 'signup', to: 'users#create'
 
-  get 'invite_attendees/:id' => 'events#invite_attendees', as: "invite_attendees"
-  get 'send_reminders_to_attendees/:id' => 'events#send_reminders_to_attendees', as: 'send_reminders_to_attendees'
-  # get '/login' => 'login#new'
-  # post '/login' => 'login#create'
-  # get '/signin' => 'Signin#new'
-  # post '/signin' => 'Signin#create'
-  get '/signin', to: 'signin#new'
-  post '/signin', to: 'signin#create'
-  get "/redirect", to: "calendars#redirect", as: 'redirect'
-  get "/callback", to: "calendars#callback", as: 'callback'
+  # Google API Routes
+  get "redirect", to: "calendars#redirect", as: 'redirect'
+  get "callback", to: "calendars#callback", as: 'callback'
   post 'create_event/:id', to: 'calendars#create_event', as: 'create_event'
+
   # Home route
   root 'signin#new'
 

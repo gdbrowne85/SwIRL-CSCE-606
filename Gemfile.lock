@@ -180,15 +180,15 @@ GEM
       dotenv (= 2.8.1)
       railties (>= 3.2)
     erubi (1.12.0)
-    faraday (2.9.0)
-      faraday-net_http (>= 2.0, < 3.2)
-    faraday-net_http (3.1.0)
-      net-http
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
+    faraday (2.9.0)
+      faraday-net_http (>= 2.0, < 3.2)
+    faraday-net_http (3.1.0)
+      net-http
     ffi (1.16.1)
     ffi (1.16.1-x64-mingw-ucrt)
     flay (2.13.1)
@@ -510,10 +510,9 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   debug
-  dotenv
   dotenv-rails
-  google-apis-calendar_v3 (~> 0.38.0)
   factory_bot_rails
+  google-apis-calendar_v3 (~> 0.38.0)
   importmap-rails
   jbuilder
   pg
