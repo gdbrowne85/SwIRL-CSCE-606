@@ -15,6 +15,7 @@ gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ] # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "bootsnap", require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'aws-sdk-rails'
+gem 'rake', '13.1.0'
 
 #Use password_digest 
 #because Rails has a built-in method called has_secure_password which utilizes the bcrypt gem to handle password hashing. 
@@ -27,6 +28,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem 'whenever', require: false
 end
 
 group :development, :test do

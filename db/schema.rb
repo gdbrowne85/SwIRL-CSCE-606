@@ -73,6 +73,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_07_050749) do
     t.datetime "updated_at", null: false
     t.time "end_time"
     t.integer "max_capacity"
+    t.datetime "reminder_time", precision: nil
   end
 
   create_table "events", force: :cascade do |t|
