@@ -28,7 +28,7 @@ GitHub Repo - https://github.com/gdbrowne85/SwIRL-CSCE-606
 
 Code Climate Quality Report - https://codeclimate.com/github/gdbrowne85/SwIRL-CSCE-606
 
-Documentation - 
+Documentation - https://github.com/gdbrowne85/SwIRL-CSCE-606/tree/main/documentation/Spring2024
 
 Project Management - https://www.pivotaltracker.com/n/projects/2690139
 
@@ -208,4 +208,4 @@ Create a key to run SMTP using the below commands.
 
 # Login:
 
-Currently, To login into the Skhedule webapp, use email: 'contact_pankaj@tamu.edu' and password: '1234'. Additional functionalities related to login will be added in the next iteration and details will be updated in this section.
+User creation functionality is now live.  Create a user id to login, or click on "Continue without signing in" if you do not wish to create a user id.
