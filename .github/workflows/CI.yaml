@@ -1,0 +1,35 @@
+# Continuous Integration configuration for Code Climate test coverage reporting
+
+name: Ruby
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Run tests and generate coverage report
+      run: bundle exec rspec
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{secrets.CODECOV_TOKEN}} # Required only for private repositories
+
+    - name: Upload Coverage to Code Climate
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+        ./cc-test-reporter before-build
+        ./cc-test-reporter after-build --exit-code ${{ job.status }} --id 50c306bcaacc4da23cbe7b321a8fcbe8b00a202c516f9bc45823ce2821dbf396
