@@ -32,4 +32,4 @@ jobs:
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         chmod +x ./cc-test-reporter
         ./cc-test-reporter before-build
-        ./cc-test-reporter after-build --exit-code ${{ job.status }} --id 50c306bcaacc4da23cbe7b321a8fcbe8b00a202c516f9bc45823ce2821dbf396
+        ./cc-test-reporter after-build --exit-code ${{ job.status }} --id 48c7d9698754c58754438e1a3b357cd583a75ccfdf9d0709a7a8b9119de769eb
