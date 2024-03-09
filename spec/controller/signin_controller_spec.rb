@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe SigninController, type: :controller do
@@ -26,23 +28,23 @@ RSpec.describe SigninController, type: :controller do
     end
 
     context 'with non-existent email' do
-        it 'redirects to the login page with a user not found message' do
-          post :create, params: { email: 'nonexistent@example.com', password: 'password123' }
-          expect(response).to redirect_to('/signin')
-          # Add an expectation for the flash message if your application sets one
-        end
+      it 'redirects to the login page with a user not found message' do
+        post :create, params: { email: 'nonexistent@example.com', password: 'password123' }
+        expect(response).to redirect_to('/signin')
+        # Add an expectation for the flash message if your application sets one
       end
+    end
 
     context 'with missing credentials' do
-        it 'redirects to the login page when email is missing' do
-            post :create, params: { password: 'password123' }
-            expect(response).to redirect_to('/signin')
-        end
+      it 'redirects to the login page when email is missing' do
+        post :create, params: { password: 'password123' }
+        expect(response).to redirect_to('/signin')
+      end
 
-        it 'redirects to the login page when password is missing' do
-            post :create, params: { email: 'test@example.com' }
-            expect(response).to redirect_to('/signin')
-        end
+      it 'redirects to the login page when password is missing' do
+        post :create, params: { email: 'test@example.com' }
+        expect(response).to redirect_to('/signin')
+      end
     end
   end
 end

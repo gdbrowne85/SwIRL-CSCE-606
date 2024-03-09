@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Rails.application.routes.draw do
 #   resources :events do
 #     member do
@@ -12,7 +14,7 @@
 #   root 'signin#new'
 #   get 'static_pages/home'
 #   get 'static_pages/help'
-  
+
 #   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
 #   # Defines the root path route ("/")
@@ -39,18 +41,12 @@
 
 #   #get 'events/:id/email_invitation' => 'events#email_invitation', as: :email_invitation
 
-
 #   #get 'eventsList' => 'events#index'
 
 #   #for login
 #   # post '/check_login', to: 'login_controller#check_login'
 
 # end
-
-
-
-
-
 
 Rails.application.routes.draw do
   # Events routes
@@ -77,8 +73,8 @@ Rails.application.routes.draw do
   post 'signup', to: 'users#create'
 
   # Google API Routes
-  get "redirect", to: "calendars#redirect", as: 'redirect'
-  get "callback", to: "calendars#callback", as: 'callback'
+  get 'redirect', to: 'calendars#redirect', as: 'redirect'
+  get 'callback', to: 'calendars#callback', as: 'callback'
   post 'create_event/:id', to: 'calendars#create_event', as: 'create_event'
 
   # Home route
@@ -94,4 +90,9 @@ Rails.application.routes.draw do
   get 'invite_attendees/:id', to: 'events#invite_attendees', as: 'invite_attendees'
   get 'send_reminders_to_attendees/:id', to: 'events#send_reminders_to_attendees', as: 'send_reminders_to_attendees'
   get '/check_email', to: 'users#check_email'
+
+  # Route for login page
+  get 'login', to: 'login#new', as: :login
+  post 'login', to: 'login#create'
+  get '/static_pages/home', to: 'static_pages#home'
 end
