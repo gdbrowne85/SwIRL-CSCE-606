@@ -1,4 +1,4 @@
-# Continuous Integration configuration for Code Climate test coverage reporting
+# Continuous Integration configuration for Code Climate test coverage
 
 name: Ruby
 
