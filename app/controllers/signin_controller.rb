@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SigninController < ApplicationController
   def new
     # Render the login form
@@ -8,15 +10,13 @@ class SigninController < ApplicationController
     password = params[:password]
 
     # Fetch user from the database based on the email
-    user = User.find_by(email: email)
+    user = User.find_by(email:)
 
-    if user && user.authenticate(password)
-      logger.debug "Login successful"
+    if user&.authenticate(password)
+      logger.debug 'Login successful'
       redirect_to '/static_pages/home' # Redirect to home page
     else
       redirect_to '/signin', alert: 'Invalid email or password' # Redirect to login page or show error message
     end
   end
 end
-
-  
