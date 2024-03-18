@@ -1,4 +1,6 @@
-require "active_support/core_ext/integer/time"
+# frozen_string_literal: true
+
+require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   config.log_level = :debug # configure verbose logging
@@ -24,13 +26,13 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join("tmp/caching-dev.txt").exist?
+  if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=#{2.days.to_i}"
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
   else
     config.action_controller.perform_caching = false
@@ -46,25 +48,23 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
   config.action_mailer.delivery_method = :smtp
 
-  host = "localhost:3000"
+  host = 'localhost:3000'
   user_name = Rails.application.credentials.user_name
   puts(user_name)
   password = Rails.application.credentials.app_password
   puts(password)
-  config.action_mailer.default_url_options = { host: host, protocol: 'https' } # Adjusted to 'https' based on your host URL
+  config.action_mailer.default_url_options = { host:, protocol: 'https' } # Adjusted to 'https' based on your host URL
   config.action_mailer.smtp_settings = {
     address: 'smtp.gmail.com',
     port: 587,
     domain: host,
-    user_name: user_name,
-    password: password,
+    user_name:,
+    password:,
     authentication: :plain,
     enable_starttls_auto: true
-    }
+  }
 
-
-
-    #qcns mqwf gspy zzve
+  # qcns mqwf gspy zzve
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -83,7 +83,7 @@ Rails.application.configure do
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
-  
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
