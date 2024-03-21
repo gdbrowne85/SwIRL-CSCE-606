@@ -8,8 +8,7 @@ export default class extends Controller {
     console.log("Connected");
   }
 
-  startCountdown() {
-    const secondsUntilEnd = this.countdownTarget.dataset.secondsUntilEndValue;
+  startCountdown(secondsUntilEnd) {
     const now = new Date().getTime();
     const endTime = new Date(now + secondsUntilEnd * 1000);
 
@@ -34,5 +33,10 @@ export default class extends Controller {
 
       this.countdownTarget.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
     }, 1000);
+  }
+
+  sendEmails() {
+    const secondsUntilEnd = this.countdownTarget.dataset.secondsUntilEndValue;
+    this.startCountdown(secondsUntilEnd);
   }
 }

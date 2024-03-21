@@ -160,7 +160,7 @@
                             <br>
                             <%seconds_until_target_time= event.event_info&.reminder_time.to_i - Time.now.to_i%>
 
-                            <%= content_tag(:h1, "Countdown", data:{
+                            <%= content_tag(:h1, "", data:{
                                 controller: "countdown",
                                 countdown_target: "countdown",
                                 seconds_until_end_value: seconds_until_target_time
@@ -168,7 +168,7 @@
                         </div>
                         <br> <!-- Line break for spacing -->
                         <div>
-                            <h3>Send Emails: <%= link_to 'Send Emails', invite_attendees_path(event),id: "send-emails-button" %></h3>
+                            <h3>Send Emails: <%= link_to 'Send Emails', invite_attendees_path(event),id: "send-emails-button", data: { action: "click->countdown#sendEmails" } %></h3>
                         </div>
                         <div>
                             <h3>Send Reminder Email: <%= link_to 'Send Reminder Email', send_reminders_to_attendees_path(event) %></h3>
