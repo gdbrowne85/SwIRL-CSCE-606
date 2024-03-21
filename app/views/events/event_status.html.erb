@@ -163,7 +163,8 @@
                             <%= content_tag(:h1, "", data:{
                                 controller: "countdown",
                                 countdown_target: "countdown",
-                                seconds_until_end_value: seconds_until_target_time
+                                seconds_until_end_value: seconds_until_target_time,
+                                event_id: event.id
                             })%>
                         </div>
                         <br> <!-- Line break for spacing -->
