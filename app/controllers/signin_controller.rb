@@ -7,6 +7,7 @@ class SigninController < ApplicationController
 
   def create
     email = params[:email]
+    session[:user_email] = email
     password = params[:password]
 
     # Fetch user from the database based on the email
