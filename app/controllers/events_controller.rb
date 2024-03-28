@@ -193,7 +193,7 @@ class EventsController < ApplicationController
 
     @attendee_info.update(is_attending: 'yes') if @event.present? && @attendee_info.present?
 
-    redirect_to event_url(@event), notice: 'Your response has been recorded'
+    redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
 
   def no_response
@@ -211,7 +211,7 @@ class EventsController < ApplicationController
       next_attendee.update(email_sent: true)
       next_attendee.update(email_sent_time: DateTime.now)
     end
-    redirect_to event_url(@event), notice: 'Your response has been recorded'
+    redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
   end
 
   def attendees_at_or_over_capacity

@@ -60,6 +60,10 @@ Rails.application.routes.draw do
     resource :event_info
   end
 
+  # RSVP routes
+  get 'rsvp_acceptance', to: 'rsvp#acceptance'
+  get 'rsvp_rejection', to: 'rsvp#rejection'
+
   # Static pages routes
   get 'static_pages/home'
   get 'static_pages/help'
