@@ -14,6 +14,7 @@ class SigninController < ApplicationController
 
     if user&.authenticate(password)
       logger.debug 'Login successful'
+      session[:user_email] = email
       redirect_to '/static_pages/home' # Redirect to home page
     else
       redirect_to '/signin', alert: 'Invalid email or password' # Redirect to login page or show error message
