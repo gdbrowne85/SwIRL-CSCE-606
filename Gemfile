@@ -39,6 +39,7 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'google-apis-calendar_v3', '~> 0.38.0'
+  gem 'signet', '~> 0.19.0'
   gem 'rails-erd'
   gem 'rspec-rails'
   gem 'rubocop', require: false
