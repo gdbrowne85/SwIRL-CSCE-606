@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_07_050749) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_25_202614) do
   create_table "accounts", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -59,6 +59,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_07_050749) do
     t.string "email_token"
     t.boolean "email_sent", default: false
     t.datetime "email_sent_time"
+    t.boolean "reminder_email_sent", default: false
     t.index ["email_token"], name: "index_attendee_infos_on_email_token", unique: true
   end
 
