@@ -89,7 +89,7 @@
             <br>
             <%=begin%>
                 <p class="mb-4"><strong>Description:</strong> <%= @event.event_info.description %></p> 
-            <%=end%>      
+            <%=end%>
             <h3><strong> Please RSVP below </strong></h3>
             <div class="d-flex justify-content-around">
                 <a href="<%= rsvp_acceptance_url(@event, token: @token, host: @url) %>">Yes, I'll Attend</a>
