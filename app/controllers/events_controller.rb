@@ -193,7 +193,12 @@ class EventsController < ApplicationController
 
     @attendee_info.update(is_attending: 'yes') if @event.present? && @attendee_info.present?
 
-    redirect_to event_url(@event), notice: 'Your response has been recorded'
+    inviter_email = session[:user_email]
+    if !inviter_email.nil?
+      RSVPConfirmationMailer.with(inviter_email: inviter_email, event_name: @event).acceptance_email.deliver
+    end
+
+    redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
 
   def no_response
@@ -211,7 +216,13 @@ class EventsController < ApplicationController
       next_attendee.update(email_sent: true)
       next_attendee.update(email_sent_time: DateTime.now)
     end
-    redirect_to event_url(@event), notice: 'Your response has been recorded'
+
+    inviter_email = session[:user_email]
+    if !inviter_email.nil?
+      RSVPConfirmationMailer.with(inviter_email: inviter_email, event_name: @event).acceptance_email.deliver
+    end
+
+    redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
   end
 
   def attendees_at_or_over_capacity
@@ -227,6 +238,21 @@ class EventsController < ApplicationController
     @event_info = @event.event_info
 
     yes_attendees = @event.attendee_infos.where(is_attending: 'yes')
+
+    # Send emails to those attendees who have already responded "yes"
+    yes_attendees.each do |attendee|
+      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
+                                event: @event).event_reminder.deliver
+      attendee.update(email_sent_time: DateTime.now)
+    end
+
+    # Send emails to those who have not yet responded
+    no_response_attendees = @event.attendee_infos.where(is_attending: nil, email_sent: true)
+    no_response_attendees.each do |attendee|
+      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
+                                event: @event).reminder_email.deliver
+      attendee.update(email_sent_time: DateTime.now)
+    end
 
     if @event_info.max_capacity.present? && @event_info.max_capacity != yes_attendees.count
 
