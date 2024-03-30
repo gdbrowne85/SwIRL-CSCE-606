@@ -1,5 +1,5 @@
 # app/mailers/invitation_confirmation_mailer.rb
-class RSVPConfirmationMailer < ApplicationMailer
+class InvitationConfirmationMailer < ApplicationMailer
     default from: 'SkheduleSp24@gmail.com'
     default_url_options[:host] = 'https://swirlskehdule-f316b598c688.herokuapp.com/'
   
