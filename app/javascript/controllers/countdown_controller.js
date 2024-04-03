@@ -37,6 +37,7 @@ export default class extends Controller {
     const hours = Math.floor((secondsRemaining % secondsPerDay) / secondsPerHour);
     const minutes = Math.floor((secondsRemaining % secondsPerHour) / secondsPerMinute);
     const seconds = Math.floor(secondsRemaining % secondsPerMinute);
+    console.log(days, hours, minutes);
 
     this.countdownTarget.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
   }
