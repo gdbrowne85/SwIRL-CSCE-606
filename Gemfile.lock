@@ -542,6 +542,7 @@ DEPENDENCIES
   rubocop-rspec
   rubycritic
   selenium-webdriver
+  signet (~> 0.16.0)
   simplecov
   sprockets-rails
   sqlite3 (~> 1.4)
