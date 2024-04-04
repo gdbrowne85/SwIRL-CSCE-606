@@ -16,5 +16,18 @@ class RsvpConfirmationMailer < ApplicationMailer
     
         mail(to: @inviter_email, subject: 'Rejection: User Declined Your Event')
       end
+
+
+    # New methods for sending confirmation to the invitee
+    def invitee_acceptance_confirmation(invitee_email, event_name)
+      @event_name = event_name
+      mail(to: invitee_email, subject: "You've Accepted the Invitation to #{@event_name}")
+    end
+
+    def invitee_rejection_confirmation(invitee_email, event_name)
+      @event_name = event_name
+      mail(to: invitee_email, subject: "You've Declined the Invitation to #{@event_name}")
+    end
+
   end
   
