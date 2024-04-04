@@ -39,7 +39,7 @@ group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
-  gem 'google-apis-calendar_v3', '~> 0.38.0'
+  gem 'google-apis-calendar_v3', '~> 0.33.0'
   gem 'rails-erd'
   gem 'rspec-rails'
   gem 'rubocop', require: false
