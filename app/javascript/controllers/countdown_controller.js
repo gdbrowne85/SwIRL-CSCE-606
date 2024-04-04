@@ -39,7 +39,7 @@ export default class extends Controller {
     const seconds = Math.floor(secondsRemaining % secondsPerMinute);
     console.log(days, hours, minutes);
 
-    this.countdownTarget.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+    this.countdownTarget.innerHTML = `Time for Reminder: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
   }
 
   inviteAttendees(eventID) {
