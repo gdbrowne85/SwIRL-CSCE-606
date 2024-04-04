@@ -117,7 +117,7 @@ RSpec.describe EventsController, type: :controller do
       get :yes_response, params: { id: event.id, token: 'token123' }
       attendee_info.reload
       expect(attendee_info.is_attending).to eq('yes')
-      expect(response).to redirect_to(event_url(event))
+      expect(response).to redirect_to(rsvp_acceptance_path)
       expect(flash[:notice]).to eq('Your response has been recorded')
     end
   end
@@ -127,7 +127,8 @@ RSpec.describe EventsController, type: :controller do
       get :no_response, params: { id: event.id, token: 'token123' }
       attendee_info.reload
       expect(attendee_info.is_attending).to eq('no')
-      expect(response).to redirect_to(event_url(event))
+      # expect(response).to redirect_to(event_url(event))
+      expect(response).to redirect_to(rsvp_rejection_path)
       expect(flash[:notice]).to eq('Your response has been recorded')
     end
   end

@@ -194,9 +194,7 @@ class EventsController < ApplicationController
     @attendee_info.update(is_attending: 'yes') if @event.present? && @attendee_info.present?
 
     inviter_email = session[:user_email]
-    if !inviter_email.nil?
-      RSVPConfirmationMailer.with(inviter_email: inviter_email, event_name: @event).acceptance_email.deliver
-    end
+    RSVPConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
     redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
@@ -218,9 +216,7 @@ class EventsController < ApplicationController
     end
 
     inviter_email = session[:user_email]
-    if !inviter_email.nil?
-      RSVPConfirmationMailer.with(inviter_email: inviter_email, event_name: @event).acceptance_email.deliver
-    end
+    RSVPConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
     redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
   end
@@ -239,20 +235,9 @@ class EventsController < ApplicationController
 
     yes_attendees = @event.attendee_infos.where(is_attending: 'yes')
 
-    # Send emails to those attendees who have already responded "yes"
-    yes_attendees.each do |attendee|
-      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
-                                event: @event).event_reminder.deliver
-      attendee.update(email_sent_time: DateTime.now)
-    end
+    send_reminders_to_attendees
 
-    # Send emails to those who have not yet responded
-    no_response_attendees = @event.attendee_infos.where(is_attending: nil, email_sent: true)
-    no_response_attendees.each do |attendee|
-      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
-                                event: @event).reminder_email.deliver
-      attendee.update(email_sent_time: DateTime.now)
-    end
+    send_reminders_to_no_response_attendees
 
     if @event_info.max_capacity.present? && @event_info.max_capacity != yes_attendees.count
 
@@ -286,7 +271,19 @@ class EventsController < ApplicationController
       EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
                                 event: @event).event_reminder.deliver
     end
-    redirect_to eventsList_path
+  end
+
+  def send_reminders_to_no_response_attendees
+    @event = Event.find(params[:id])
+    @event_info = @event.event_info
+
+    # Find attendees who have not responded yet
+    no_response_attendees = @event.attendee_infos.where(is_attending: nil, email_sent: true, reminder_email_sent: false)
+    no_response_attendees.each do |attendee|
+      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
+                                event: @event).reminder_email.deliver
+      attendee.update(reminder_email_sent: true)
+    end
   end
 
   def series_event
