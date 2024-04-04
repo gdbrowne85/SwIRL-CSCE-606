@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'signet'
 
 class CalendarsController < ApplicationController
   def redirect

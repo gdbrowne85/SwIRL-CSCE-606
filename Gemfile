@@ -12,7 +12,6 @@ gem 'importmap-rails'
 gem 'jbuilder'
 gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.8'
-gem 'signet', '~> 0.16.0'
 gem 'rake', '13.1.0'
 gem 'roo', '~> 2.10.1'
 gem 'sprockets-rails' # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
@@ -40,6 +39,7 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'google-apis-calendar_v3', '~> 0.38.0'
+  gem 'signet', '~> 0.19.0'
   gem 'rails-erd'
   gem 'rspec-rails'
   gem 'rubocop', require: false
