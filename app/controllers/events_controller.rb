@@ -196,7 +196,7 @@ class EventsController < ApplicationController
     inviter_email = session[:user_email]
     RSVPConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
-    redirect_to event_url(@event), notice: 'Your response has been recorded'
+    redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
 
   def no_response
@@ -218,7 +218,7 @@ class EventsController < ApplicationController
     inviter_email = session[:user_email]
     RSVPConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
-    redirect_to event_url(@event), notice: 'Your response has been recorded'
+    redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
   end
 
   def attendees_at_or_over_capacity
