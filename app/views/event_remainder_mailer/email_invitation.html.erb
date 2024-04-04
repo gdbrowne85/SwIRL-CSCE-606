@@ -92,7 +92,7 @@
             <% end %>
             <h3><strong> Please RSVP below </strong></h3>
             <div class="d-flex justify-content-around">
-                <a href="<%= rsvp_acceptance_url(@event, token: @token, host: @url, time_slot: time_slot.id) %>">Yes, I'll Attend</a>
+                <a href="<%= rsvp_acceptance_url(@event, token: @token, host: @url) %>">Yes, I'll Attend</a>
                 <a href="<%= rsvp_rejection_url(@event, token: @token, host: @url) %>">No, I wont Attend</a>
             </div>
         </div>
