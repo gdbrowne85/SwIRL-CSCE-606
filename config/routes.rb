@@ -60,13 +60,6 @@ Rails.application.routes.draw do
     resource :event_info
   end
 
-  resources :events do
-    member do
-      get 'rsvp_acceptance', to: 'events#rsvp_acceptance'
-      get 'rsvp_rejection', to: 'events#rsvp_rejection'
-    end
-  end
-
   # RSVP routes
   get 'rsvp_acceptance', to: 'rsvp#acceptance'
   get 'rsvp_rejection', to: 'rsvp#rejection'
