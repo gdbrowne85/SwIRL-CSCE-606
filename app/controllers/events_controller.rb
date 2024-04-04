@@ -194,7 +194,7 @@ class EventsController < ApplicationController
     @attendee_info.update(is_attending: 'yes') if @event.present? && @attendee_info.present?
 
     inviter_email = session[:user_email]
-    RSVPConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
+    RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
     redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
@@ -216,7 +216,7 @@ class EventsController < ApplicationController
     end
 
     inviter_email = session[:user_email]
-    RSVPConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
+    RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
     redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
   end
