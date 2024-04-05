@@ -273,6 +273,10 @@ class EventsController < ApplicationController
     end
   end
 
+  def number_of_emails_sent
+    attendee_infos.where(email_sent: true).count
+  end
+
   def send_reminders_to_no_response_attendees
     @event = Event.find(params[:id])
     @event_info = @event.event_info
