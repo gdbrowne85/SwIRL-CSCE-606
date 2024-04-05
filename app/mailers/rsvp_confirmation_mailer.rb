@@ -16,11 +16,22 @@ class RsvpConfirmationMailer < ApplicationMailer
     end
 
     def rejection_email(inviter_email, event_name)
-        @inviter_email = inviter_email
-        @event_name = event_name
-        @url = 'https://swirlskehdule-f316b598c688.herokuapp.com/'
-    
-        mail(to: @inviter_email, subject: 'Rejection: User Declined Your Event', template_name: 'email_invitation')
-      end
+      @inviter_email = inviter_email
+      @event_name = event_name
+      @url = 'https://swirlskehdule-f316b598c688.herokuapp.com/'
+  
+      mail(to: @inviter_email, subject: 'Rejection: User Declined Your Event', template_name: 'email_invitation')
+    end
+
+    # New methods for sending confirmation to the invitee
+    def invitee_acceptance_confirmation(invitee_email, event_name)
+      @event_name = event_name
+      mail(to: invitee_email, subject: "You've Accepted the Invitation to #{@event_name}")
+    end
+
+    def invitee_rejection_confirmation(invitee_email, event_name)
+      @event_name = event_name
+      mail(to: invitee_email, subject: "You've Declined the Invitation to #{@event_name}")
+    end
   end
   

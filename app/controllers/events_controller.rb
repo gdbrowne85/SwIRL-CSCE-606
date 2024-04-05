@@ -191,34 +191,46 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     @attendee_info = @event.attendee_infos.find_by(email_token: params[:token])
 
-    @attendee_info.update(is_attending: 'yes') if @event.present? && @attendee_info.present?
+    if @event.present? && @attendee_info.present?
+      @attendee_info.update(is_attending: 'yes')
 
-    inviter_email = session[:user_email]
-    RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
+      inviter_email = session[:user_email]
+      RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
-    redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
+      RsvpConfirmationMailer.invitee_acceptance_confirmation(@attendee_info.email, @event.name).deliver_now
+      redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
+    else
+      redirect_to events_url, alert: 'Invalid or expired RSVP link.'
+    end
+    # redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
 
   def no_response
     @event = Event.find(params[:id])
     @attendee_info = @event.attendee_infos.find_by(email_token: params[:token])
 
-    @attendee_info.update(is_attending: 'no') if @event.present? && @attendee_info.present?
+    if @event.present? && @attendee_info.present?
+      @attendee_info.update(is_attending: 'no') 
+      # if @event.present? && @attendee_info.present?
 
-    # Find the next attendee who hasn't responded yet and is not at max capacity
-    next_attendee = @event.attendee_infos.where(email_sent: false).where.not(id: attendees_at_or_over_capacity).first
+      # Find the next attendee who hasn't responded yet and is not at max capacity
+      next_attendee = @event.attendee_infos.where(email_sent: false).where.not(id: attendees_at_or_over_capacity).first
 
-    if next_attendee.present?
-      EventRemainderMailer.with(email: next_attendee.email, token: next_attendee.email_token,
-                                event: @event).reminder_email.deliver
-      next_attendee.update(email_sent: true)
-      next_attendee.update(email_sent_time: DateTime.now)
-    end
+      if next_attendee.present?
+        EventRemainderMailer.with(email: next_attendee.email, token: next_attendee.email_token,
+                                  event: @event).reminder_email.deliver
+        next_attendee.update(email_sent: true)
+        next_attendee.update(email_sent_time: DateTime.now)
+      end
 
-    inviter_email = session[:user_email]
-    RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
+        inviter_email = session[:user_email]
+        RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
 
-    redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
+        RsvpConfirmationMailer.invitee_rejection_confirmation(@attendee_info.email, @event.name).deliver_now
+        redirect_to rsvp_rejection_path, notice: 'Your response has been recorded'
+    else
+      redirect_to events_url(@event), alert: 'Invalid or expired RSVP link.'
+    end 
   end
 
   def attendees_at_or_over_capacity
