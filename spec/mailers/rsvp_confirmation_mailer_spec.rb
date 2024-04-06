@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/mailers/rsvp_confirmation_mailer_spec.rb
 
 require 'rails_helper'
@@ -15,8 +17,8 @@ RSpec.describe RsvpConfirmationMailer, type: :mailer do
     end
 
     it 'renders the body' do
-        expect(mail.body.encoded).to match('This is a confirmation that you have joined the event')
-        expect(mail.body.encoded).to match(event_name)
+      expect(mail.body.encoded).to match('This is a confirmation that you have joined the event')
+      expect(mail.body.encoded).to match(event_name)
     end
   end
 
@@ -32,8 +34,8 @@ RSpec.describe RsvpConfirmationMailer, type: :mailer do
     end
 
     it 'renders the body' do
-        expect(mail.body.encoded).to match('You have declined the invitation to')
-        expect(mail.body.encoded).to match(event_name)
+      expect(mail.body.encoded).to match('You have declined the invitation to')
+      expect(mail.body.encoded).to match(event_name)
     end
   end
 end

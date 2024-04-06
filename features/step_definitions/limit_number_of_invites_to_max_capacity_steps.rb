@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 Given('I am on the home page') do
-    visit('/home')
+  visit('/home')
 end
 
 When('I click on the {string} button') do |button_text|
-    click_button(button_text)
+  click_button(button_text)
 end
 
 And(/^I fill in the event creation form with the following data:$/) do |table|
@@ -37,13 +37,12 @@ And('I submit the event creation form') do
 end
 
 Given('I created an event and I click on the {string} link') do |string|
-    click_link(string)
+  click_link(string)
 end
 
-Then("I should be on the {string} page") do |string|
-    expect(page).to have_content(string)
+Then('I should be on the {string} page') do |string|
+  expect(page).to have_content(string)
 end
-
 
 When('I click on {string} event') do |event_name|
   find('div', text: event_name, match: :prefer_exact).click
@@ -62,9 +61,5 @@ And('I count the number of emails sent for the event') do
 end
 
 Then('the number of emails sent should be less than or equal to the max capacity for the event') do
-
   expect(@count_emails_sent).to be <= @extracted_max_capacity
 end
-
-
-

@@ -45,5 +45,4 @@ RSpec.describe EventsController, type: :controller do
       expect(response).to redirect_to(eventsList_path)
     end
   end
-
 end
