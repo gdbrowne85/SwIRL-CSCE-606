@@ -200,7 +200,7 @@ class EventsController < ApplicationController
       RsvpConfirmationMailer.invitee_acceptance_confirmation(@attendee_info.email, @event.name).deliver_now
       redirect_to event_url(@event), notice: 'Your response has been recorded'
     else
-      redirect_to events_url, alert: 'Invalid or expired RSVP link.'
+      redirect_to event_url(@event), alert: 'Invalid or expired RSVP link.'
     end
     # redirect_to rsvp_acceptance_path, notice: 'Your response has been recorded'
   end
