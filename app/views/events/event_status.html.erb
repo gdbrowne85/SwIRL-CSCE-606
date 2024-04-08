@@ -25,8 +25,9 @@
             padding: 20px;
             border-radius: 10px; /* Rounded corners for the card */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-            width: auto; /* Width adjusted to content */
+            width: 90%; /* Set width to occupy most of the screen */
             margin-bottom: 15px; /* Space between cards */
+            max-width: 700px; /* Limit maximum width for larger screens */
         }
 
         .event-header {
@@ -88,6 +89,13 @@
         /* Additional padding for the header */
         .dashboard-header {
             padding-bottom: 20px;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .event-card {
+                width: 95%; /* Adjust width for smaller screens */
+            }
         }
 
     </style>

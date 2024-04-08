@@ -16,6 +16,7 @@
             align-items: center;
             justify-content: center;
             font-family: 'Arial', sans-serif;
+            margin: 0; /* Remove default margin */
         }
 
         .event-card {
@@ -24,6 +25,8 @@
             border-radius: 15px;
             overflow: hidden;
             transition: transform 0.3s;
+            width: 90%; /* Adjust width to occupy most of the screen */
+            max-width: 600px; /* Limit maximum width for larger screens */
         }
 
         .event-card:hover {
@@ -71,6 +74,13 @@
 
         .event-list {
             cursor: pointer;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .event-card {
+                width: 95%; /* Adjust width for smaller screens */
+            }
         }
     </style>
 </head>
