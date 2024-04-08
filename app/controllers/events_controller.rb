@@ -279,12 +279,13 @@ class EventsController < ApplicationController
     @event_info = @event.event_info
 
     # Find attendees who responded "yes"
-    yes_attendees = @event.attendee_infos.where(is_attending: 'yes')
+    yes_attendees = @event.attendee_infos.where(is_attending: 'yes', email_sent: true, reminder_email_sent: false)
 
     # Send emails to those attendees who have already responded "yes"
     yes_attendees.each do |attendee|
       EventRemainderMailer.with(email: attendee.email, token: attendee.email_token,
                                 event: @event).event_reminder.deliver
+      attendee.update(reminder_email_sent: true)
     end
   end
 
