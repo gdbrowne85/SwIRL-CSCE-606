@@ -121,7 +121,11 @@
                 </div>
             <% end %>
         </div>
-
+        <div>
+            <%= form.label :reminder_time, "Reminder Timer" %>
+            <%= form.datetime_field :reminder_time, class: 'form-input', id: 'ReminderTime',
+                required: true, value: @event.event_info.present? ? @event.event_info.reminder_time : ""%>
+        </div>
 
         <button type="button" onclick="addDateTimePair()" class="gradient-btn" id="add-date-time">Add Date-Time Pair</button> 
 
