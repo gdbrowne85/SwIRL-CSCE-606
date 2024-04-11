@@ -14,6 +14,11 @@
             color: white;
         }
 
+        .title {
+            font-size: 40px;
+            font-weight: bold;
+        }
+
         .content {
             max-width: 960px;
             padding: 15px;
@@ -21,11 +26,27 @@
             text-align: center;
         }
 
-        .title {
-            font-size: 40px;
+        .title-bar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between; /* To push content to both edges */
+            align-items: center; /* Vertical centering */
+        }
+
+        .navbar-title {
+            font-size: 24px; /* Adjust the font size */
             font-weight: bold;
-            letter-spacing: -2px;
-            margin-bottom: 20px;
+            letter-spacing: -1px;
+            margin-bottom: 0; /* Remove margin to align with subtitle */
+            text-align: center;
+        }
+
+        .navbar-email {
+            line-height: 40px; /* Adjust line height for vertical alignment */
+            margin-left: 15px;
+            text-align: end;
         }
 
         .subtitle {
@@ -58,7 +79,6 @@
             transform: scale(1.05);
         }
 
-        /* Apply different styles for medium and larger screens */
         @media (min-width: 768px) {
             .button-container {
                 flex-direction: row; /* Horizontal layout for medium and larger screens */
@@ -74,6 +94,19 @@
 </head>
 <body>
 
+<!-- Navigation bar -->
+<nav class="title-bar">
+    <div class="container d-flex align-items-center">
+        <div class="navbar-title flex-grow-1">
+            <span>A Place For All Your Events</span>
+        </div>
+        <!-- Email -->
+        <div class="navbar-email">
+            <%= session[:user_email] if session[:user_email] %>
+        </div>
+    </div>
+</nav>
+
 <div class="content">
     <div class="title">SKHEDULE.COM</div>
     <div class="subtitle">Click below to create events</div>
@@ -88,5 +121,6 @@
         <!-- <%= button_to "Event Dashboard", eventdashboard_path, method: :get, class: "cta-button" %> -->
     </div>
 </div>
+
 </body>
 </html>
