@@ -6,6 +6,32 @@
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Title bar and nav bar styles */
+        .title-bar {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between; /* To push content to both edges */
+            align-items: center; /* Vertical centering */
+        }
+
+        .navbar-title {
+            font-size: 24px; /* Adjust the font size */
+            font-weight: bold;
+            letter-spacing: -1px;
+            margin-top: 40px; /* Remove margin to align with subtitle */
+            text-align: center;
+        }
+
+        .navbar-email {
+            line-height: 40px; /* Adjust line height for vertical alignment */
+            margin-left: 15px;
+            margin-top: 40px;
+            text-align: end;
+        }
+
+        /* Remaining styles from the previous code */
         body, html {
             height: 100%;
             margin: 0;
@@ -128,10 +154,23 @@
     </style>
 </head>
 <body>
+    <!-- Navigation bar -->
+    <nav class="title-bar">
+        <div class="container d-flex align-items-center">
+            <div class="navbar-title flex-grow-1">
+                <span>A Place For All Your Events</span>
+            </div>
+            <!-- Email -->
+            <div class="navbar-email">
+                <%= session[:user_email] if session[:user_email] %>
+            </div>
+        </div>
+    </nav>
+
     <div class="event-card">
-        <div class="title">Event Creation</div>
+        <div class="title">Skhedule.com - Event Management</div>
         <div class="subtitle">Create your event with ease</div>
-        <%= form_with(model: @event, local: true) do |form| %>
+        <form>
             <% if @event.errors.any? %>
                 <div style="color: red">
                     <h2><%= pluralize(@event.errors.count, "error") %> prohibited this event from being saved:</h2>
@@ -145,45 +184,41 @@
 
             <div class="form-row">
                 <div>
-                    <%= form.label :name, "Event Name" %>
-                    <%= form.text_field :name, class: 'form-input', id: 'EventName', required: true, placeholder: 'Event Name' %>
+                    <label for="EventName">Event Name</label>
+                    <input type="text" class="form-input" id="EventName" required placeholder="Event Name">
                 </div>
 
                 <div>
-                    <%= form.label :venue, "Event Venue" %>
-                    <%= form.text_field :venue, class: 'form-input', id: 'EventVenue', required: true, placeholder: 'Event Venue', value: @event.event_info&.venue %>
+                    <label for="EventVenue">Event Venue</label>
+                    <input type="text" class="form-input" id="EventVenue" required placeholder="Event Venue">
                 </div>
 
                 <div>
-                    <%= form.label :date, "Event Date" %>
-                    <%= form.date_field :date, class: 'form-input', id: 'EventDate',
-                        min: Date.today.strftime('%Y-%m-%d'),
-                        value: @event.event_info.present? ? @event.event_info.date : "", required: true %>
+                    <label for="EventDate">Event Date</label>
+                    <input type="date" class="form-input" id="EventDate" min="<%= Date.today.strftime('%Y-%m-%d') %>" required>
                 </div>
 
                 <div>
-                    <%= form.label :max_capacity, "Max Capacity" %>
-                    <%= form.number_field :max_capacity, in: 1..1000000000, step: 1, class: 'form-input', id: 'EventMaxCapacity',
-                        value: @event.event_info.present? ? @event.event_info.max_capacity : "", placeholder:"Max Capacity"%>
+                    <label for="EventMaxCapacity">Max Capacity</label>
+                    <input type="number" class="form-input" id="EventMaxCapacity" min="1" max="1000000000" step="1" placeholder="Max Capacity">
                 </div>
 
                 <div>
-                    <%= form.label :start_time, "Event Start Time" %>
-                    <%= form.time_field :start_time, class: 'form-input', id: 'EventStartTime', required: true, value: @event.event_info&.start_time&.strftime('%T.%L') %>
+                    <label for="EventStartTime">Event Start Time</label>
+                    <input type="time" class="form-input" id="EventStartTime" required>
                 </div>
 
                 <div>
-                    <%= form.label :end_time, "Event End Time" %>
-                    <%= form.time_field :end_time, class: 'form-input', id: 'EventEndTime', required: true, value: @event.event_info&.end_time&.strftime('%T.%L') %>
+                    <label for="EventEndTime">Event End Time</label>
+                    <input type="time" class="form-input" id="EventEndTime" required>
                 </div>
                 <div>
-                    <%= form.label :reminder_time, "Reminder Timer" %>
-                    <%= form.datetime_field :reminder_time, class: 'form-input', id: 'ReminderTime',
-                        required: true, value: @event.event_info.present? ? @event.event_info.reminder_time : ""%>
+                    <label for="ReminderTime">Reminder Timer</label>
+                    <input type="datetime-local" class="form-input" id="ReminderTime" required>
                 </div>
                 <div>
-                    <%= form.label :csv_file, "Upload List of Emails (Excel/CSV with column labels Email and Priority)" %>
-                    <%= form.file_field :csv_file, class: 'form-input', accept: '.csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', required: true %>
+                    <label for="csv_file">Upload List of Emails (Excel/CSV with column labels Email and Priority)</label>
+                    <input type="file" class="form-input" id="csv_file" accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
                 </div>
                 <div>
                     <label for="userInput">Enter Emails (Comma-Separated List)</label>
@@ -196,10 +231,10 @@
 
             <div>
                 <h4 align="center">
-                    <%= form.submit "Submit", class: "gradient-btn", onclick: "return validateTime()" %>
+                    <input type="submit" value="Submit" class="gradient-btn" onclick="return validateTime()">
                 </h4>
             </div>
-        <% end %>
+        </form>
     </div>
 
     <script>
