@@ -2,92 +2,135 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <title>Skhedule.com - Series Event Form</title>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
-        body {
-            background-color: #e2c9be;
-            background-image: linear-gradient(315deg, #e2c9be 0%, #fbf7e9 74%);
-            background-size: cover;
-            background-repeat: no-repeat;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Arial', sans-serif;
-            margin: 0; /* Remove default margin */
-        }
+    body {
+        background-color: #e2c9be;
+        background-image: linear-gradient(315deg, #e2c9be 0%, #fbf7e9 74%);
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Arial', sans-serif;
+        margin: 0; /* Remove default margin */
+    }
 
+    .navbar {
+        position: relative; /* Ensure positioning context */
+        z-index: 1000; /* Set a higher z-index */
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .navbar-brand {
+        color: #fff;
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .event-header {
+        padding-top: 20px; /* Updated padding-top */
+        background-color: #4CAF50;
+        color: white;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        font-size: 2em;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-align: center; /* Align text center */
+    }
+
+    .event-card {
+        background-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        width: 90%; /* Adjust width to occupy most of the screen */
+        max-width: 600px; /* Limit maximum width for larger screens */
+        margin-top: 20px; /* Add some margin to the top */
+    }
+
+    .event-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .gradient-btn {
+        background: #555;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+    }
+
+    .gradient-btn:hover {
+        background: #666;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .event-header {
+        padding-top: 50px;
+        background-color: #4CAF50;
+        color: white;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        font-size: 2em;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-align: center; /* Align text center */
+    }
+
+    .event-content {
+        padding: 30px 20px;
+    }
+
+    .highlight-text {
+        color: rgb(8, 92, 120);
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .event-list {
+        cursor: pointer;
+    }
+
+    /* Responsive styling */
+    @media (max-width: 768px) {
         .event-card {
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s;
-            width: 90%; /* Adjust width to occupy most of the screen */
-            max-width: 600px; /* Limit maximum width for larger screens */
+            width: 95px; /* Adjust width for smaller screens */
         }
-
-        .event-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .gradient-btn {
-            background: #555;
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-        }
-
-        .gradient-btn:hover {
-            background: #666;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .event-header {
-            padding: 30px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-            font-size: 2em;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        .event-content {
-            padding: 30px 20px;
-        }
-
-        .highlight-text {
-            color: rgb(8, 92, 120);
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        .event-list {
-            cursor: pointer;
-        }
-
-        /* Responsive styling */
-        @media (max-width: 768px) {
-            .event-card {
-                width: 95%; /* Adjust width for smaller screens */
-            }
-        }
+    }
     </style>
 </head>
 
 <body>
+    <!-- Navigation bar -->
+    <<nav class="title-bar">
+    <div class="container d-flex align-items-center">
+        <div class="navbar-title flex-grow-1">
+            <span>A Place For All Your Events</span>
+        </div>
+        <!-- Email -->
+        <div class="navbar-email">
+            <%= session[:user_email] if session[:user_email] %> 
+        </div>
+    </div>
+    </nav>
+
     <div class="event-header">
-        <h1 align="center">Event Dashboard</h1>
+        <h1>Event Dashboard</h1>
     </div>
     <div class="event-card">
         <div class="event-content">
