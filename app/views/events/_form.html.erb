@@ -6,7 +6,6 @@
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Title bar and nav bar styles */
         .title-bar {
             background-color: black;
             color: white;
@@ -30,8 +29,6 @@
             margin-top: 40px;
             text-align: end;
         }
-
-        /* Remaining styles from the previous code */
         body, html {
             height: 100%;
             margin: 0;
@@ -166,11 +163,10 @@
             </div>
         </div>
     </nav>
-
     <div class="event-card">
-        <div class="title">Skhedule.com - Event Management</div>
+        <div class="title">Event Creation</div>
         <div class="subtitle">Create your event with ease</div>
-        <form>
+        <%= form_with(model: @event, local: true) do |form| %>
             <% if @event.errors.any? %>
                 <div style="color: red">
                     <h2><%= pluralize(@event.errors.count, "error") %> prohibited this event from being saved:</h2>
@@ -184,41 +180,45 @@
 
             <div class="form-row">
                 <div>
-                    <label for="EventName">Event Name</label>
-                    <input type="text" class="form-input" id="EventName" required placeholder="Event Name">
+                    <%= form.label :name, "Event Name" %>
+                    <%= form.text_field :name, class: 'form-input', id: 'EventName', required: true, placeholder: 'Event Name' %>
                 </div>
 
                 <div>
-                    <label for="EventVenue">Event Venue</label>
-                    <input type="text" class="form-input" id="EventVenue" required placeholder="Event Venue">
+                    <%= form.label :venue, "Event Venue" %>
+                    <%= form.text_field :venue, class: 'form-input', id: 'EventVenue', required: true, placeholder: 'Event Venue', value: @event.event_info&.venue %>
                 </div>
 
                 <div>
-                    <label for="EventDate">Event Date</label>
-                    <input type="date" class="form-input" id="EventDate" min="<%= Date.today.strftime('%Y-%m-%d') %>" required>
+                    <%= form.label :date, "Event Date" %>
+                    <%= form.date_field :date, class: 'form-input', id: 'EventDate',
+                        min: Date.today.strftime('%Y-%m-%d'),
+                        value: @event.event_info.present? ? @event.event_info.date : "", required: true %>
                 </div>
 
                 <div>
-                    <label for="EventMaxCapacity">Max Capacity</label>
-                    <input type="number" class="form-input" id="EventMaxCapacity" min="1" max="1000000000" step="1" placeholder="Max Capacity">
+                    <%= form.label :max_capacity, "Max Capacity" %>
+                    <%= form.number_field :max_capacity, in: 1..1000000000, step: 1, class: 'form-input', id: 'EventMaxCapacity',
+                        value: @event.event_info.present? ? @event.event_info.max_capacity : "", placeholder:"Max Capacity"%>
                 </div>
 
                 <div>
-                    <label for="EventStartTime">Event Start Time</label>
-                    <input type="time" class="form-input" id="EventStartTime" required>
+                    <%= form.label :start_time, "Event Start Time" %>
+                    <%= form.time_field :start_time, class: 'form-input', id: 'EventStartTime', required: true, value: @event.event_info&.start_time&.strftime('%T.%L') %>
                 </div>
 
                 <div>
-                    <label for="EventEndTime">Event End Time</label>
-                    <input type="time" class="form-input" id="EventEndTime" required>
+                    <%= form.label :end_time, "Event End Time" %>
+                    <%= form.time_field :end_time, class: 'form-input', id: 'EventEndTime', required: true, value: @event.event_info&.end_time&.strftime('%T.%L') %>
                 </div>
                 <div>
-                    <label for="ReminderTime">Reminder Timer</label>
-                    <input type="datetime-local" class="form-input" id="ReminderTime" required>
+                    <%= form.label :reminder_time, "Reminder Timer" %>
+                    <%= form.datetime_field :reminder_time, class: 'form-input', id: 'ReminderTime',
+                        required: true, value: @event.event_info.present? ? @event.event_info.reminder_time : ""%>
                 </div>
                 <div>
-                    <label for="csv_file">Upload List of Emails (Excel/CSV with column labels Email and Priority)</label>
-                    <input type="file" class="form-input" id="csv_file" accept=".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                    <%= form.label :csv_file, "Upload List of Emails (Excel/CSV with column labels Email and Priority)" %>
+                    <%= form.file_field :csv_file, class: 'form-input', accept: '.csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', required: true %>
                 </div>
                 <div>
                     <label for="userInput">Enter Emails (Comma-Separated List)</label>
@@ -231,10 +231,10 @@
 
             <div>
                 <h4 align="center">
-                    <input type="submit" value="Submit" class="gradient-btn" onclick="return validateTime()">
+                    <%= form.submit "Submit", class: "gradient-btn", onclick: "return validateTime()" %>
                 </h4>
             </div>
-        </form>
+        <% end %>
     </div>
 
     <script>
