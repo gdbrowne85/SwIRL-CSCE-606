@@ -220,6 +220,10 @@
                     <%= form.label :csv_file, "Upload List of Emails (Excel/CSV with column labels Email and Priority)" %>
                     <%= form.file_field :csv_file, class: 'form-input', accept: '.csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', required: true %>
                 </div>
+                <div>
+                    <label for="userInput">Enter Emails (Comma-Separated List)</label>
+                    <input type="text" id="userInput" name="userInput" class="form-input" placeholder="example@email.com, example2@email.com, ...">
+                </div>
             </div>
 
 
@@ -238,11 +242,32 @@
             var startTime = document.getElementById('EventStartTime').value;
             var endTime = document.getElementById('EventEndTime').value;
 
+            var userInput = document.getElementById('userInput').value;
+            var emails = userInput.split(',').map(function(email) {
+                return email.trim();
+            });
+
             if (startTime >= endTime) {
                 alert('End time must be later than start time');
                 return false;
             }
+
+            for (var i = 0; i < emails.length; i++) {
+                var email = emails[i];
+                if (!isValidEmail(email)) {
+                    alert('Invalid email: ' + emails[i]);
+                    return false;
+                }
+            }
+
             return true;
+        }
+
+            
+        function isValidEmail(email) {
+            // Regular expression for validating email address
+            var regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return regex.test(email);
         }
     </script>
 </body>

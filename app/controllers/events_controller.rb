@@ -65,6 +65,13 @@ class EventsController < ApplicationController
         row = Hash[[headers, worksheet.row(i)].transpose]
         parsed_data << row
       end
+
+      if params[:userInput].present?
+        emails = params[:userInput].split(',').map(&:strip)
+        emails.each do |email|
+          parsed_data << { 'Email' => email }
+        end
+      end
     end
 
     # NOTE: @event.id does not exist until the record is SAVED
