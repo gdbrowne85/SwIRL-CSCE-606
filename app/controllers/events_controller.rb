@@ -34,20 +34,23 @@ class EventsController < ApplicationController
     end_time = event_params[:end_time]
     max_capacity = event_params[:max_capacity]
     reminder_time = event_params[:reminder_time]
+    created_by = session[:user_email]
 
     date = Time.now if date.nil?
 
     @event = Event.new(
-      name:
+      name: name,
+      created_by: created_by  # Assigning the email from session
     )
+
     @event_info = EventInfo.new(
-      name:,
-      venue:,
-      date:,
-      start_time:,
-      end_time:,
-      reminder_time:,
-      max_capacity:
+      name: name,  # Assuming you want the same name as Event
+      venue: venue,
+      date:  date,
+      start_time: start_time,
+      end_time: end_time,
+      reminder_time: reminder_time,
+      max_capacity: max_capacity
     )
 
     if csv_file.present? && File.extname(csv_file.path) == '.csv'
@@ -155,6 +158,21 @@ class EventsController < ApplicationController
   def event_status
     @events = Event.all
   end
+
+  def eventdashboard
+    user_email = session[:user_email]
+  
+    # Events the user is hosting
+    @events_im_hosting = Event.where(created_by: user_email)
+  
+    # Events the user is invited to
+    @events_im_invited_to = Event.joins(:attendee_infos)
+                                 .where(attendee_infos: {email: user_email}).distinct
+  
+    render :eventdashboard
+  end
+  
+
 
   def yes_response_series
     @event = Event.find(params[:id])
