@@ -34,6 +34,9 @@ class EventsController < ApplicationController
     end_time = event_params[:end_time]
     max_capacity = event_params[:max_capacity]
     reminder_time = event_params[:reminder_time]
+    user_input = event_params[:user_input]
+
+    parsed_data = []
     created_by = session[:user_email]
 
     date = Time.now if date.nil?
@@ -68,12 +71,12 @@ class EventsController < ApplicationController
         row = Hash[[headers, worksheet.row(i)].transpose]
         parsed_data << row
       end
+    end
 
-      if params[:userInput].present?
-        emails = params[:userInput].split(',').map(&:strip)
-        emails.each do |email|
-          parsed_data << { 'Email' => email }
-        end
+    if user_input.present?
+      emails = user_input.split(',').map(&:strip)
+      emails.each do |email|
+        parsed_data << { 'Email' => email }
       end
     end
 
@@ -347,6 +350,6 @@ class EventsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def event_params
     params.require(:event).permit(:name, :venue, :date, :start_time, :end_time, :max_capacity, :reminder_time,
-                                  :csv_file, time_slots_attributes: %i[id date start_time end_time _destroy])
+                                  :csv_file, :user_input, time_slots_attributes: %i[id date start_time end_time _destroy])
   end
 end
