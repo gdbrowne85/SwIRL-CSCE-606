@@ -218,11 +218,11 @@
                 </div>
                 <div>
                     <%= form.label :csv_file, "Upload List of Emails (Excel/CSV with column labels Email and Priority)" %>
-                    <%= form.file_field :csv_file, class: 'form-input', accept: '.csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', required: true %>
+                    <%= form.file_field :csv_file, id: 'csvFileInput', class: 'form-input', accept: '.csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', required: false %>
                 </div>
                 <div>
-                    <label for="userInput">Enter Emails (Comma-Separated List)</label>
-                    <input type="text" id="userInput" name="userInput" class="form-input" placeholder="example@email.com, example2@email.com, ...">
+                    <%= form.label :user_input, "Enter Emails (Comma-Separated List)" %>
+                    <%= form.text_field :user_input, id: 'userInput', class: 'form-input', placeholder: 'example@email.com, example2@email.com, ...' %>
                 </div>
             </div>
 
@@ -246,6 +246,11 @@
             var emails = userInput.split(',').map(function(email) {
                 return email.trim();
             });
+
+            if (userInput.trim() ===  '' && document.getElementById('csvFileInput').files.length === 0) {
+                alert('Please enter emails or upload a file');
+                return false;
+            }
 
             if (startTime >= endTime) {
                 alert('End time must be later than start time');
