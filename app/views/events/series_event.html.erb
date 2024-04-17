@@ -172,10 +172,14 @@
         <button type="button" onclick="addDateTimePair()" class="gradient-btn" id="add-date-time">Add Date-Time Pair</button> 
 
         <%= form.label "Upload Excel/CSV File" %>
-        <%= form.file_field :csv_file, class: 'form-input', required: true, accept: ".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" %>
+        <%= form.file_field :csv_file, id: 'csvFileInput', class: 'form-input', required: false, accept: ".csv, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" %>
+
+        <%= form.label :user_input, "Enter Emails (Comma-Separated List)" %>
+        <%= form.text_field :user_input, id: 'userInput', class: 'form-input', placeholder: 'example@email.com, example2@email.com, ...' %>
+
 
         <div align="center">
-            <%= form.submit "Submit", class: "gradient-btn" %>
+            <%= form.submit "Submit", class: "gradient-btn", onclick: "return validateEmails()" %>
             <a href="javascript:history.back()" class="gradient-btn">Back</a>
         </div>
     <% end %>
@@ -248,6 +252,7 @@ document.querySelector("form").addEventListener("submit", function (event) {
         var startTime = new Date(startTimeStr);
         var endTime = new Date(endTimeStr);
 
+
         if (startTime < now) {
             event.preventDefault();
             alert("Date cannot be in the past.");
@@ -261,6 +266,34 @@ document.querySelector("form").addEventListener("submit", function (event) {
         }
     }
 });
+
+    function validateEmails() {
+        var userInput = document.getElementById('userInput').value;
+        var emails = userInput.split(',').map(function(email) {
+            return email.trim();
+        });
+
+        if (userInput.trim() === '' && document.getElementById('csvFileInput').files.length === 0) {
+            event.preventDefault();
+            alert("Please enter email addresses or upload a file.");
+            return;
+        }
+
+        for (var i = 0; i < emails.length; i++) {
+            var email = emails[i];
+            if (!isValidEmail(email)) {
+                alert('Invalid email: ' + emails[i]);
+                return false;
+            }
+        }
+
+        return true;
+    }
+    function isValidEmail(email) {
+        // Regular expression for validating email address
+        var regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return regex.test(email);
+    }    
 </script>
 
 </body>
