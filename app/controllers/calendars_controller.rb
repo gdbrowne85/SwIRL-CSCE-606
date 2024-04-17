@@ -32,31 +32,59 @@ class CalendarsController < ApplicationController
         service.authorization = client
 
         Date.today
-        start_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.start_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
-        end_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.end_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
+        if @event.time_slots.present?
+          @event.time_slots.each do |time_slot|
+            start_datetime = DateTime.parse("#{time_slot.date}T#{time_slot.start_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
+            end_datetime = DateTime.parse("#{time_slot.date}T#{time_slot.end_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
 
-        new_event = Google::Apis::CalendarV3::Event.new(
-          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_datetime),
-          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_datetime),
-          location: @event_info.venue,
-          summary: @event_info.name
-        )
+            new_event = Google::Apis::CalendarV3::Event.new(
+              start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_datetime),
+              end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_datetime),
+              location: @event_info.venue,
+              summary: @event_info.name
+            )
 
-        if @event.attendee_infos.present?
-          attendees = []
-          @event.attendee_infos.each do |attendee_info|
-            attendees << Google::Apis::CalendarV3::EventAttendee.new(email: attendee_info.email,
-                                                                     display_name: attendee_info.name, response_status: attendee_info.is_attending == 'yes' ? 'accepted' : 'needsAction')
+            if @event.attendee_infos.present?
+              attendees = []
+              @event.attendee_infos.each do |attendee_info|
+                attendees << Google::Apis::CalendarV3::EventAttendee.new(email: attendee_info.email,
+                                                                         display_name: attendee_info.name, response_status: attendee_info.is_attending == 'yes' ? 'accepted' : 'needsAction')
+              end
+              new_event.attendees = attendees
+            end
+    
+            calendar_id = params[:calendar_id] || 'primary'
+            service.insert_event(calendar_id, new_event)
+    
+            flash[:notice] = 'Series event added successfully!'
           end
-          new_event.attendees = attendees
-        end
+        else 
+          start_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.start_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
+          end_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.end_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
 
-        calendar_id = params[:calendar_id] || 'primary'
-        service.insert_event(calendar_id, new_event)
+          new_event = Google::Apis::CalendarV3::Event.new(
+            start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_datetime),
+            end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_datetime),
+            location: @event_info.venue,
+            summary: @event_info.name
+          )
 
-        flash[:notice] = 'Event added successfully!'
+          if @event.attendee_infos.present?
+            attendees = []
+            @event.attendee_infos.each do |attendee_info|
+              attendees << Google::Apis::CalendarV3::EventAttendee.new(email: attendee_info.email,
+                                                                      display_name: attendee_info.name, response_status: attendee_info.is_attending == 'yes' ? 'accepted' : 'needsAction')
+            end
+            new_event.attendees = attendees
+          end
 
+          calendar_id = params[:calendar_id] || 'primary'
+          service.insert_event(calendar_id, new_event)
+
+          flash[:notice] = 'Event added successfully!'
+        end 
         redirect_to eventsList_url
+
       rescue Google::Apis::Error
         redirect_to redirect_path
       end
