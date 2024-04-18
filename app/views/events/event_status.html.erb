@@ -119,6 +119,16 @@
             padding-top: 80px;
             padding-bottom: 50px;
         }
+        
+        .status-awaiting-reply {
+            color: #ffc107; /* Bootstrap yellow color for warning */
+        }
+        .status-attending {
+            color: #28a745; /* Bootstrap green color for success */
+        }
+        .status-not-attending {
+            color: #dc3545; /* Bootstrap red color for danger */
+        }
 
         @media (max-width: 768px) {
             .event-card {
@@ -245,7 +255,9 @@
                             <li class="attendee">
                                 <strong><%= attendee_info&.name %></strong> -
                                 Email: <%= attendee_info&.email %><br>
-                                Status: <%= attendee_info&.is_attending == "yes" ? '<span class="text-success status">Attending</span>'.html_safe : (attendee_info&.is_attending == "no" ? '<span class="text-danger status">Not Attending</span>'.html_safe : '<span class="text-warning status">Pending</span>'.html_safe) %><br>
+                                Status: <span class="<%= status_class(attendee_info.status) %>">
+                                    <%= readable_status(attendee_info.status) %>
+                                </span><br>
                                 <% if attendee_info&.is_attending == "yes" %>
                                 <% attending_count += 1 %>
                                 <% else %>

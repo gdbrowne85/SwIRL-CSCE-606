@@ -220,7 +220,7 @@ class EventsController < ApplicationController
     @attendee_info = @event.attendee_infos.find_by(email_token: params[:token])
 
     if @event.present? && @attendee_info.present?
-      @attendee_info.update(is_attending: 'yes')
+      @attendee_info.update(status: :replied_attending)
 
       inviter_email = session[:user_email]
       RsvpConfirmationMailer.with(inviter_email:, event_name: @event).acceptance_email.deliver unless inviter_email.nil?
@@ -238,7 +238,7 @@ class EventsController < ApplicationController
     @attendee_info = @event.attendee_infos.find_by(email_token: params[:token])
 
     if @event.present? && @attendee_info.present?
-      @attendee_info.update(is_attending: 'no')
+      @attendee_info.update(status: :replied_not_attending)
       # if @event.present? && @attendee_info.present?
 
       # Find the next attendee who hasn't responded yet and is not at max capacity
