@@ -14,6 +14,7 @@ gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.8'
 gem 'rake', '13.1.0'
 gem 'roo', '~> 2.10.1'
+gem 'particles-js-rails'
 gem 'signet', '~> 0.16.0'
 gem 'sprockets-rails' # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'stimulus-rails'
