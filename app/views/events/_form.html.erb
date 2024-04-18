@@ -19,7 +19,7 @@
             font-size: 24px; /* Adjust the font size */
             font-weight: bold;
             letter-spacing: -1px;
-            margin-top: 40px; /* Remove margin to align with subtitle */
+            margin-top: 20px; /* Remove margin to align with subtitle */
             text-align: center;
         }
 
@@ -43,12 +43,13 @@
 
         .event-card {
             background-color: #333; /* Dark background for the card */
-            padding: 20px;
+            padding: 50px;
             border-radius: 10px; /* Rounded corners for the card */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
             width: auto; /* Width adjusted to content */
             max-width: auto;
-            overflow-y: auto;
+            max-height: 80vh; /* Set maximum height to occupy 80% of viewport height */
+            overflow-y: auto; /* Enable vertical scrolling when content exceeds the height */
             margin: 0 auto; 
         }
 
@@ -243,13 +244,22 @@
             var endTime = document.getElementById('EventEndTime').value;
 
             var userInput = document.getElementById('userInput').value;
-            var emails = userInput.split(',').map(function(email) {
-                return email.trim();
-            });
 
             if (userInput.trim() ===  '' && document.getElementById('csvFileInput').files.length === 0) {
                 alert('Please enter emails or upload a file');
                 return false;
+            }
+            else if (userInput.trim() != '') {
+                var emails = userInput.split(',').map(function(email) {
+                    return email.trim();
+                });
+                for (var i = 0; i < emails.length; i++) {
+                    var email = emails[i];
+                    if (!isValidEmail(email)) {
+                        alert('Invalid email: ' + emails[i]);
+                        return false;
+                    }
+                }
             }
 
             if (startTime >= endTime) {
@@ -257,13 +267,6 @@
                 return false;
             }
 
-            for (var i = 0; i < emails.length; i++) {
-                var email = emails[i];
-                if (!isValidEmail(email)) {
-                    alert('Invalid email: ' + emails[i]);
-                    return false;
-                }
-            }
 
             return true;
         }
