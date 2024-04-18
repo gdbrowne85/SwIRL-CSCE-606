@@ -269,21 +269,21 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
     function validateEmails() {
         var userInput = document.getElementById('userInput').value;
-        var emails = userInput.split(',').map(function(email) {
-            return email.trim();
-        });
 
         if (userInput.trim() === '' && document.getElementById('csvFileInput').files.length === 0) {
             event.preventDefault();
             alert("Please enter email addresses or upload a file.");
             return;
-        }
-
-        for (var i = 0; i < emails.length; i++) {
-            var email = emails[i];
-            if (!isValidEmail(email)) {
-                alert('Invalid email: ' + emails[i]);
-                return false;
+        } else if (userInput.trim() != '') {
+            var emails = userInput.split(',').map(function(email) {
+                return email.trim();
+            });
+            for (var i = 0; i < emails.length; i++) {
+                var email = emails[i];
+                if (!isValidEmail(email)) {
+                    alert('Invalid email: ' + emails[i]);
+                    return false;
+                }
             }
         }
 
