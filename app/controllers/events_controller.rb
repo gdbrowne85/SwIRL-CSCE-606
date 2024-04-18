@@ -325,7 +325,6 @@ class EventsController < ApplicationController
   def send_reminders_to_no_response_attendees
     events_to_remind = EventInfo.where('reminder_time <= ?', DateTime.now)
 
-
     events_to_remind.each do |event_info|
       event = Event.find(event_info.event_id)
 

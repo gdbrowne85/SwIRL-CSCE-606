@@ -60,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_18_034650) do
     t.boolean "email_sent", default: false
     t.datetime "email_sent_time"
     t.boolean "reminder_email_sent", default: false
-    t.integer "status"
+    t.integer "status", default: 1
     t.index ["email_token"], name: "index_attendee_infos_on_email_token", unique: true
   end
 
