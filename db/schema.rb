@@ -84,6 +84,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_18_034650) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "created_by"
+    t.datetime "reminder_time"
   end
 
   create_table "time_slots", force: :cascade do |t|
