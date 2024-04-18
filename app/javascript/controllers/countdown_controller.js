@@ -25,7 +25,7 @@ export default class extends Controller {
       clearInterval(this.countdown);
       this.countdownTarget.innerHTML = "Send Reminder Email";
 
-      this.inviteAttendees(this.eventID);
+      // this.inviteAttendees(this.eventID);
       return;
     }
 
