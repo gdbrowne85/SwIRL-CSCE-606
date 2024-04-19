@@ -275,7 +275,7 @@ class EventsController < ApplicationController
   
     yes_attendees = @event.attendee_infos.where(is_attending: 'yes')
   
-    send_reminders_to_attendees(event_id)
+    send_reminders_to_attendees
   
     send_reminders_to_no_response_attendees
   
@@ -294,16 +294,21 @@ class EventsController < ApplicationController
   end
   
   def send_reminders_to_attendees(event_id)
-    event = Event.find(event_id)
-    event_info = event.event_info
+    # event = Event.find(event_id)
+    # event_info = event.event_info
+    events_to_remind = EventInfo.where('reminder_time <= ?', DateTime.now)
+
+    events_to_remind.each do |event_info|
+      event = Event.find(event_info.event_id)
   
-    # Find attendees who responded "yes" and haven't been sent a reminder email yet
-    yes_attendees = event.attendee_infos.where(is_attending: 'yes', email_sent: true, reminder_email_sent: false)
-  
-    # Send emails to those attendees who have already responded "yes"
-    yes_attendees.each do |attendee|
-      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token, event: event).event_reminder.deliver
-      attendee.update(reminder_email_sent: true)
+      # Find attendees who responded "yes" and haven't been sent a reminder email yet
+      yes_attendees = event.attendee_infos.where(is_attending: 'yes', email_sent: true, reminder_email_sent: false)
+    
+      # Send emails to those attendees who have already responded "yes"
+      yes_attendees.each do |attendee|
+        EventRemainderMailer.with(email: attendee.email, token: attendee.email_token, event: event).event_reminder.deliver
+        attendee.update(reminder_email_sent: true)
+      end
     end
   end
   
