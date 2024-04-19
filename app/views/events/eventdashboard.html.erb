@@ -115,6 +115,16 @@
             padding-bottom: 50px;
         }
 
+        .status-awaiting-reply {
+            color: #ffc107; /* Bootstrap yellow color for warning */
+        }
+        .status-attending {
+            color: #28a745; /* Bootstrap green color for success */
+        }
+        .status-not-attending {
+            color: #dc3545; /* Bootstrap red color for danger */
+        }
+
         @media (max-width: 768px) {
             .event-card {
                 width: 95%;
@@ -193,14 +203,10 @@
                             <ul class="list-unstyled">
                             <% event.attendee_infos.each do |attendee_info| %>
                             <li class="attendee">
-                            <strong><%= attendee_info.name %></strong> - Email: <%= attendee_info.email %><br>
-                            Status: <% if attendee_info.is_attending == "yes" %>
-                            <span class="text-success">Attending</span>
-                            <% elsif attendee_info.is_attending == "no" %>
-                            <span class="text-danger">Not Attending</span>
-                            <% else %>
-                            <span class="text-warning">Pending</span>
-                            <% end %>
+                                <strong><%= attendee_info.name %></strong> - Email: <%= attendee_info.email %><br>
+                                Status: <span class="<%= status_class(attendee_info.status) %>">
+                                        <%= readable_status(attendee_info.status) %>
+                                    </span><br>
                             </li>
                             <% end %>
                             </ul>
