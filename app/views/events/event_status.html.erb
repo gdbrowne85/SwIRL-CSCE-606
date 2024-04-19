@@ -19,6 +19,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            overflow-x: hidden; /* Enable horizontal scrolling */
         }
 
         .title-bar {
@@ -118,16 +119,40 @@
             padding-top: 80px;
             padding-bottom: 50px;
         }
+        
+        .status-awaiting-reply {
+            color: #ffc107; /* Bootstrap yellow color for warning */
+        }
+        .status-attending {
+            color: #28a745; /* Bootstrap green color for success */
+        }
+        .status-not-attending {
+            color: #dc3545; /* Bootstrap red color for danger */
+        }
 
         @media (max-width: 768px) {
             .event-card {
                 width: 95%;
             }
         }
+        
+        /* Particle Orb styling */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: -1; /* Ensure particles are behind content */
+        }
     </style>
 </head>
 
 <body>
+    <!-- Particle Orb -->
+    <div id="particles-js"></div>
+    
     <!-- Navigation bar -->
     <nav class="title-bar">
         <div class="container d-flex align-items-center">
@@ -224,13 +249,16 @@
                         <div>
                             <h3>Send Reminder Email: <%= link_to 'Send Reminder Email', send_reminders_to_attendees_path(event) %></h3>
                         </div>
+                        
                         <h2>Attendees:</h2>
                         <ul class="list-unstyled">
                             <% event.attendee_infos.each do |attendee_info| %>
                             <li class="attendee">
                                 <strong><%= attendee_info&.name %></strong> -
                                 Email: <%= attendee_info&.email %><br>
-                                Status: <%= attendee_info&.is_attending == "yes" ? '<span class="text-success status">Attending</span>'.html_safe : (attendee_info&.is_attending == "no" ? '<span class="text-danger status">Not Attending</span>'.html_safe : '<span class="text-warning status">Pending</span>'.html_safe) %><br>
+                                Status: <span class="<%= status_class(attendee_info.status) %>">
+                                    <%= readable_status(attendee_info.status) %>
+                                </span><br>
                                 <% if attendee_info&.is_attending == "yes" %>
                                 <% attending_count += 1 %>
                                 <% else %>
@@ -253,6 +281,123 @@
         </ul>
     </div>
 
+    <!-- Particle Orb JS -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+        console.log("Page fully rendered");
+    </script>
+
+    <!-- JavaScript for toggling event content -->
     <script>
         function toggleEventContent(eventId) {
             var eventContent = document.getElementById("event-content-" + eventId);

@@ -12,6 +12,7 @@
             font-family: 'Arial', sans-serif;
             background-color: black;
             color: white;
+            overflow: hidden; /* Prevent scrolling due to particles */
         }
 
         .title {
@@ -20,10 +21,21 @@
         }
 
         .content {
-            max-width: 960px;
+            position: relative; /* Position particles relative to content */
+            max-width: 9600px;
             padding: 15px;
             margin: 0 auto;
             text-align: center;
+            z-index: 1; /* Ensure content is above particles */
+        }
+
+        .particle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Ensure particles are behind content */
         }
 
         .title-bar {
@@ -33,6 +45,8 @@
             display: flex;
             justify-content: space-between; /* To push content to both edges */
             align-items: center; /* Vertical centering */
+            position: relative; /* Position relative for z-index */
+            z-index: 1; /* Ensure title bar is above particles */
         }
 
         .navbar-title {
@@ -93,34 +107,151 @@
     </style>
 </head>
 <body>
+    <!-- Particle Orb -->
+    <div class="particle-container" id="particles-js"></div>
 
-<!-- Navigation bar -->
-<nav class="title-bar">
-    <div class="container d-flex align-items-center">
-        <div class="navbar-title flex-grow-1">
-            <span>A Place For All Your Events</span>
+    <!-- Navigation bar -->
+    <nav class="title-bar">
+        <div class="container d-flex align-items-center">
+            <div class="navbar-title flex-grow-1">
+                <span>A Place For All Your Events</span>
+            </div>
+            <!-- Email -->
+            <div class="navbar-email">
+                <%= session[:user_email] if session[:user_email] %>
+            </div>
         </div>
-        <!-- Email -->
-        <div class="navbar-email">
-            <%= session[:user_email] if session[:user_email] %>
+    </nav>
+
+    <div class="content">
+        <div class="title">SKHEDULE.COM</div>
+        <div class="subtitle">Click below to create events</div>
+        <div class="button-container">
+            <!-- Ruby on Rails button_to helper for creating singular event -->
+            <%= button_to "Create singular event", newEvents_path, method: :get, class: "cta-button" %>
+            <!-- Ruby on Rails button_to helper for creating series event -->
+            <%= button_to "Create series event", series_path, method: :get, class: "cta-button" %>
+            <!-- Ruby on Rails button_to helper for display a user's event dashboard -->
+            <%= button_to "Event Dashboard", eventdashboard_path, method: :get, class: "cta-button" %>
         </div>
     </div>
-</nav>
 
-<div class="content">
-    <div class="title">SKHEDULE.COM</div>
-    <div class="subtitle">Click below to create events</div>
-    <div class="button-container">
-        <!-- Ruby on Rails button_to helper for creating singular event -->
-        <%= button_to "Create singular event", newEvents_path, method: :get, class: "cta-button" %>
-        <!-- Ruby on Rails button_to helper for creating series event -->
-        <%= button_to "Create series event", series_path, method: :get, class: "cta-button" %>
-        <!-- Ruby on Rails button_to helper for checking current status -->
-        <%= button_to "Check current status", eventsList_path, method: :get, class: "cta-button" %>
-        <!-- Ruby on Rails button_to helper for display a user's event dashboard -->
-        <%= button_to "Event Dashboard", eventdashboard_path, method: :get, class: "cta-button" %>
-    </div>
-</div>
+
+    <!-- Include the Particle Orb JS file -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 100,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+        console.log("Page fully rendered");
+    </script>
 
 </body>
 </html>
