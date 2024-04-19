@@ -293,7 +293,7 @@ class EventsController < ApplicationController
     end
   end
   
-  def send_reminders_to_attendees(event_id)
+  def send_reminders_to_attendees
     # event = Event.find(event_id)
     # event_info = event.event_info
     events_to_remind = EventInfo.where('reminder_time <= ?', DateTime.now)
