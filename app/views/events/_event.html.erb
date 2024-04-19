@@ -120,7 +120,7 @@
                 <h3 align="center">
                     <% if @event.csv_file.attached? %>
                         <p>
-                            <strong>CSV File:</strong>
+                            <strong>CSV/Excel File:</strong>
                             <%= link_to @event.csv_file.filename, rails_blob_path(@event.csv_file) %>
                         </p>
                     <% end %>
