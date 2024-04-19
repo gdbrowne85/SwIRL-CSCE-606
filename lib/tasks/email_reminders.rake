@@ -9,7 +9,7 @@ namespace :reminders do
   end
 
   desc "Send reminder eamils to everyone who has not yet respnoded"
-  task :send_reminders_to_no_response_attendees => :environment do
+  task :send_no_response_reminders => :environment do
     EventsController.new.send_reminders_to_no_response_attendees
   end
 end

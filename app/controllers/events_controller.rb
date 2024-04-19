@@ -277,7 +277,7 @@ class EventsController < ApplicationController
   
     send_reminders_to_attendees(event_id)
   
-    send_reminders_to_no_response_attendees(event_id)
+    send_reminders_to_no_response_attendees
   
     if @event_info.max_capacity.present? && @event_info.max_capacity != yes_attendees.count
       attendees_to_invite = @event.attendee_infos.where(email_sent: false).limit(@event_info.max_capacity)
@@ -312,17 +312,22 @@ class EventsController < ApplicationController
     attendee_infos.where(email_sent: true).count
   end
 
-  def send_reminders_to_no_response_attendees(event_id)
-    event = Event.find(event_id)
-    event_info = event.event_info
+  def send_reminders_to_no_response_attendees
+    # event = Event.find(event_id)
+    # event_info = event.event_info
+    events_to_remind = EventInfo.where('reminder_time <= ?', DateTime.now)
+
+    events_to_remind.each do |event_info|
+      event = Event.find(event_info.event_id)
   
-    # Find attendees who have not responded yet and have been sent the initial email but no reminder
-    no_response_attendees = event.attendee_infos.where(is_attending: nil, email_sent: true, reminder_email_sent: false)
+      # Find attendees who have not responded yet and have been sent the initial email but no reminder
+      no_response_attendees = event.attendee_infos.where(is_attending: nil, email_sent: true, reminder_email_sent: false)
   
     # Send reminder emails to these attendees
-    no_response_attendees.each do |attendee|
-      EventRemainderMailer.with(email: attendee.email, token: attendee.email_token, event: event).reminder_email.deliver
-      attendee.update(reminder_email_sent: true)
+      no_response_attendees.each do |attendee|
+        EventRemainderMailer.with(email: attendee.email, token: attendee.email_token, event: event).reminder_email.deliver
+        attendee.update(reminder_email_sent: true)
+      end
     end
   end
   
