@@ -80,47 +80,45 @@ class EventsController < ApplicationController
       end
     end
 
-    # NOTE: @event.id does not exist until the record is SAVED
+  # NOTE: @event.id does not exist until the record is SAVED
+    if @event.save
 
-    respond_to do |format|
-      if @event.save
+      # Create time_slot data if applicable
+      @event.update(event_params.extract!(:time_slots_attributes))
 
-        # Create time_slot data if applicable
-        @event.update(event_params.extract!(:time_slots_attributes))
-
-        # Save the other events reference to the event
-        # ---------------------- Make this a separate function ------------------- #
-        if parsed_data.nil?
-          # Handle the case when parsed_data is nil
-          puts 'parsed_data is nil'
-        elsif parsed_data.empty?
-          puts 'parsed_data is empty'
-        # Handle the case when parsed_data is an empty array
-        else
-          parsed_data.each do |row|
-            email = row['Email']
-            priority = row['Priority']
-
-            @attendee = AttendeeInfo.new(
-              email:,
-              event_id: @event.id,
-              email_token: SecureRandom.uuid,
-              priority:
-            )
-            puts "Validation errors: #{@attendee.errors.full_messages}" unless @attendee.save
-          end
-        end
-        # ----------------------------------------------------------------------- #
-        @event_info.event_id = @event.id
-
-        if @event_info.save
-          invite_attendees(@event.id)  # Pass @event.id directly
-          redirect_to eventdashboard_path(@event), notice: 'Event was successfully created.'
-        end
+      # Save the other events reference to the event
+      # ---------------------- Make this a separate function ------------------- #
+      if parsed_data.nil?
+        # Handle the case when parsed_data is nil
+        puts 'parsed_data is nil'
+      elsif parsed_data.empty?
+        puts 'parsed_data is empty'
+      # Handle the case when parsed_data is an empty array
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
+        parsed_data.each do |row|
+          email = row['Email']
+          priority = row['Priority']
+
+          @attendee = AttendeeInfo.new(
+            email:,
+            event_id: @event.id,
+            email_token: SecureRandom.uuid,
+            priority:
+          )
+          puts "Validation errors: #{@attendee.errors.full_messages}" unless @attendee.save
+        end
       end
+      # ----------------------------------------------------------------------- #
+      @event_info.event_id = @event.id
+
+      if @event_info.save
+        invite_attendees(@event.id)  # Pass @event.id directly
+        flash[:notice] = 'Event was successfully created.'
+        redirect_to eventdashboard_path
+      end
+    else
+      flash.now[:notice] = 'Event creation failed'
+      render :new
     end
   end
 
