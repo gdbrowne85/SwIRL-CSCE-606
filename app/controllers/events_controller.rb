@@ -170,7 +170,11 @@ class EventsController < ApplicationController
     user_email = session[:user_email]
 
     # Events the user is hosting
-    @events_im_hosting = Event.where(created_by: user_email)
+    @events_im_hosting = Event.where(created_by: user_email).map do |event|
+      yes_count = event.attendee_infos.where(status: 'replied_attending').count
+      no_count = event.attendee_infos.where(status: 'replied_not_attending').count
+      event.attributes.merge('yes_count' => yes_count, 'no_count' => no_count)
+    end
 
     # Events the user is invited to
     @events_im_invited_to = Event.joins(:attendee_infos)
