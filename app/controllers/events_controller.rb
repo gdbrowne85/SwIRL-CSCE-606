@@ -26,6 +26,8 @@ class EventsController < ApplicationController
 
   # POST /events or /events.json
   def create
+    # Use the helper method to parse start_time and end_time
+    
     name = event_params[:name]
     venue = event_params[:venue]
     date = event_params[:date]
@@ -39,15 +41,13 @@ class EventsController < ApplicationController
     parsed_data = []
     created_by = session[:user_email]
 
-    date = Time.now if date.nil?
-
     @event = Event.new(
       name:,
       created_by: # Assigning the email from session
     )
 
     @event_info = EventInfo.new(
-      name:, # Assuming you want the same name as Event
+      name:, 
       venue:,
       date:,
       start_time:,
@@ -343,6 +343,7 @@ class EventsController < ApplicationController
 
   private
 
+
   # Use callbacks to share common setup or constraints between actions.
   def set_event
     @event = Event.find(params[:id])
@@ -354,3 +355,5 @@ class EventsController < ApplicationController
                                   :csv_file, :user_input, time_slots_attributes: %i[id date start_time end_time _destroy])
   end
 end
+
+
