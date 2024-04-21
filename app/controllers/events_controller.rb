@@ -168,9 +168,19 @@ class EventsController < ApplicationController
 
   def eventdashboard
     user_email = session[:user_email]
-
     # Events the user is hosting
-    @events_im_hosting = Event.where(created_by: user_email)
+    @events_im_hosting = Event.includes(:attendee_infos).where(created_by: user_email)
+
+    # Add the Yes/No counts efficiently via ActiveRecord queries
+    @events_im_hosting = @events_im_hosting.map do |event|
+      event.define_singleton_method(:yes_count) do
+        event.attendee_infos.where(status: 'replied_attending').count
+      end
+      event.define_singleton_method(:no_count) do
+        event.attendee_infos.where(status: 'replied_not_attending').count
+      end
+      event
+    end
 
     # Events the user is invited to
     @events_im_invited_to = Event.joins(:attendee_infos)
