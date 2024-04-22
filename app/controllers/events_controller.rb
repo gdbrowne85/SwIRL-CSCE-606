@@ -26,8 +26,6 @@ class EventsController < ApplicationController
 
   # POST /events or /events.json
   def create
-    # Use the helper method to parse start_time and end_time
-    
     name = event_params[:name]
     venue = event_params[:venue]
     date = event_params[:date]
@@ -37,25 +35,27 @@ class EventsController < ApplicationController
     max_capacity = event_params[:max_capacity]
     reminder_time = event_params[:reminder_time]
     user_input = event_params[:user_input]
-
+  
     parsed_data = []
     created_by = session[:user_email]
-
+  
+    date = Time.now if date.nil?
+  
     @event = Event.new(
-      name:,
-      created_by: # Assigning the email from session
+      name: name,
+      created_by: created_by
     )
-
+  
     @event_info = EventInfo.new(
-      name:, 
-      venue:,
-      date:,
-      start_time:,
-      end_time:,
-      reminder_time:,
-      max_capacity:
+      name: name,
+      venue: venue,
+      date: date,
+      start_time: start_time,
+      end_time: end_time,
+      reminder_time: reminder_time,
+      max_capacity: max_capacity
     )
-
+  
     if csv_file.present? && File.extname(csv_file.path) == '.csv'
       @event.csv_file.attach(csv_file)
       # Parse the CSV data
@@ -72,55 +72,56 @@ class EventsController < ApplicationController
         parsed_data << row
       end
     end
-
+  
     if user_input.present?
       emails = user_input.split(',').map(&:strip)
       emails.each do |email|
         parsed_data << { 'Email' => email }
       end
     end
-
-  # NOTE: @event.id does not exist until the record is SAVED
-    if @event.save
-
-      # Create time_slot data if applicable
-      @event.update(event_params.extract!(:time_slots_attributes))
-
-      # Save the other events reference to the event
-      # ---------------------- Make this a separate function ------------------- #
-      if parsed_data.nil?
-        # Handle the case when parsed_data is nil
-        puts 'parsed_data is nil'
-      elsif parsed_data.empty?
-        puts 'parsed_data is empty'
-      # Handle the case when parsed_data is an empty array
-      else
-        parsed_data.each do |row|
-          email = row['Email']
-          priority = row['Priority']
-
-          @attendee = AttendeeInfo.new(
-            email:,
-            event_id: @event.id,
-            email_token: SecureRandom.uuid,
-            priority:
-          )
-          puts "Validation errors: #{@attendee.errors.full_messages}" unless @attendee.save
+  
+    respond_to do |format|
+      if @event.save
+        # Create time_slot data if applicable
+        @event.update(event_params.extract!(:time_slots_attributes))
+  
+        # Save the other events reference to the event
+        if parsed_data.nil?
+          # Handle the case when parsed_data is nil
+          puts 'parsed_data is nil'
+        elsif parsed_data.empty?
+          puts 'parsed_data is empty'
+        else
+          parsed_data.each do |row|
+            email = row['Email']
+            priority = row['Priority']
+  
+            @attendee = AttendeeInfo.new(
+              email: email,
+              event_id: @event.id,
+              email_token: SecureRandom.uuid,
+              priority: priority
+            )
+            unless @attendee.save
+              puts "Validation errors: #{@attendee.errors.full_messages}"
+            end
+          end
+        end
+        
+        @event_info.event_id = @event.id
+  
+        if @event_info.save
+          invite_attendees(@event.id)
+          format.html { redirect_to eventdashboard_path, notice: 'Event was successfully created.' }
+          format.json { render :show, status: :created, location: @event }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @event_info.errors, status: :unprocessable_entity }
         end
       end
-      # ----------------------------------------------------------------------- #
-      @event_info.event_id = @event.id
-
-      if @event_info.save
-        invite_attendees(@event.id)  # Pass @event.id directly
-        flash[:notice] = 'Event was successfully created.'
-        redirect_to eventsList_path
-      end
-    else
-      flash.now[:notice] = 'Event creation failed'
-      render :new
     end
   end
+  
 
   # PATCH/PUT /events/1 or /events/1.json
   def update
@@ -162,32 +163,21 @@ class EventsController < ApplicationController
     end
   end
 
-  def all_events
+  def event_status
     @events = Event.all
   end
 
-  def event_status
-    #Event Dashboard for Logged In User
+  def eventdashboard
     user_email = session[:user_email]
-    # Events the user is hosting
-    @events_im_hosting = Event.includes(:attendee_infos).where(created_by: user_email)
 
-    # Add the Yes/No counts efficiently via ActiveRecord queries
-    @events_im_hosting = @events_im_hosting.map do |event|
-      event.define_singleton_method(:yes_count) do
-        event.attendee_infos.where(status: 'replied_attending').count
-      end
-      event.define_singleton_method(:no_count) do
-        event.attendee_infos.where(status: 'replied_not_attending').count
-      end
-      event
-    end
+    # Events the user is hosting
+    @events_im_hosting = Event.where(created_by: user_email)
 
     # Events the user is invited to
     @events_im_invited_to = Event.joins(:attendee_infos)
                                  .where(attendee_infos: { email: user_email }).distinct
 
-    render :event_status
+    render :eventdashboard
   end
 
   def yes_response_series
@@ -354,7 +344,6 @@ class EventsController < ApplicationController
 
   private
 
-
   # Use callbacks to share common setup or constraints between actions.
   def set_event
     @event = Event.find(params[:id])
@@ -366,5 +355,3 @@ class EventsController < ApplicationController
                                   :csv_file, :user_input, time_slots_attributes: %i[id date start_time end_time _destroy])
   end
 end
-
-
