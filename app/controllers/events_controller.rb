@@ -114,7 +114,7 @@ class EventsController < ApplicationController
       if @event_info.save
         invite_attendees(@event.id)  # Pass @event.id directly
         flash[:notice] = 'Event was successfully created.'
-        redirect_to eventdashboard_path
+        redirect_to eventsList_path
       end
     else
       flash.now[:notice] = 'Event creation failed'
@@ -162,11 +162,12 @@ class EventsController < ApplicationController
     end
   end
 
-  def event_status
+  def all_events
     @events = Event.all
   end
 
-  def eventdashboard
+  def event_status
+    #Event Dashboard for Logged In User
     user_email = session[:user_email]
     # Events the user is hosting
     @events_im_hosting = Event.includes(:attendee_infos).where(created_by: user_email)
@@ -186,7 +187,7 @@ class EventsController < ApplicationController
     @events_im_invited_to = Event.joins(:attendee_infos)
                                  .where(attendee_infos: { email: user_email }).distinct
 
-    render :eventdashboard
+    render :event_status
   end
 
   def yes_response_series

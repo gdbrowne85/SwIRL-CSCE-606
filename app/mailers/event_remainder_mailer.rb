@@ -18,13 +18,13 @@ class EventRemainderMailer < ApplicationMailer
       CSV.foreach(csv_file_path, headers: true) do |row|
         email = row['email'] # Assuming 'email' is a column in your CSV
 
-        mail(to: email, subject: 'Email Invitation').deliver # Use deliver here, not deliver_now
+        mail(to: email, subject: 'Email Invitation') #.deliver not necessary, mail already sends email when method returns, that's why we were getting 2 emails instead of one
       end
     elsif File.extname(csv_file_path) == '.xlsx'
       workbook = Roo::Excelx.new(csv_file_path)
       column_1_data = workbook.column(1)
       column_1_data.each do |value|
-        mail(to: value, subject: 'Email Invitation').deliver # Use deliver here, not deliver_now
+        mail(to: value, subject: 'Email Invitation')
       end
     end
   end
