@@ -116,7 +116,7 @@ RSpec.describe EventsController, type: :controller do
     it 'updates attendee_info to yes and redirects' do
       get :yes_response, params: { id: event.id, token: 'token123' }
       attendee_info.reload
-      expect(attendee_info.is_attending).to eq('yes')
+      expect(attendee_info.status).to eq('replied_attending')
       expect(response).to redirect_to(event_url(event))
       expect(flash[:notice]).to eq('Your response has been recorded')
     end
@@ -126,7 +126,7 @@ RSpec.describe EventsController, type: :controller do
     it 'updates attendee_info to no and redirects' do
       get :no_response, params: { id: event.id, token: 'token123' }
       attendee_info.reload
-      expect(attendee_info.is_attending).to eq('no')
+      expect(attendee_info.status).to eq('replied_not_attending')
       expect(response).to redirect_to(event_url(event))
       # expect(response).to redirect_to(events_url)
       expect(flash[:notice]).to eq('Your response has been recorded')
@@ -323,7 +323,7 @@ RSpec.describe EventsController, type: :controller do
   describe 'GET #invite_attendees' do
     before do
       # Setup for the test. Adjust as per your model associations and requirements.
-      allow(Event).to receive(:find).with(event.id.to_s).and_return(event)
+      allow(Event).to receive(:find).with(event.id).and_return(event)
       allow(event).to receive(:event_info).and_return(event_info)
       allow(EventRemainderMailer).to receive_message_chain(:with, :reminder_email, :deliver)
     end
@@ -331,30 +331,23 @@ RSpec.describe EventsController, type: :controller do
     context 'when max_capacity is present' do
       before do
         allow(event_info).to receive(:max_capacity).and_return(1)
-        get :invite_attendees, params: { id: event.id }
+        controller.invite_attendees(event.id)
       end
 
       it 'sends emails up to the max capacity' do
         expect(EventRemainderMailer).to have_received(:with).exactly(1).times
       end
 
-      it 'redirects to events list' do
-        expect(response).to redirect_to(eventsList_path)
-      end
     end
 
     context 'when max_capacity is not present' do
       before do
         allow(event_info).to receive(:max_capacity).and_return(nil)
-        get :invite_attendees, params: { id: event.id }
+        controller.invite_attendees(event.id)
       end
 
       it 'sends emails to all attendees' do
         expect(EventRemainderMailer).to have_received(:with).at_least(:once)
-      end
-
-      it 'redirects to events list' do
-        expect(response).to redirect_to(eventsList_path)
       end
     end
   end
@@ -369,7 +362,7 @@ RSpec.describe EventsController, type: :controller do
       expect do
         post :create, params: { event: valid_attributes }
       end.to change(Event, :count).by(1)
-      expect(response).to redirect_to(event_url(Event.last))
+      expect(response).to redirect_to(eventdashboard_path)
       expect(flash[:notice]).to eq('Event was successfully created.')
     end
   end
@@ -407,7 +400,7 @@ RSpec.describe EventsController, type: :controller do
       new_event = Event.last
       expect(new_event.name).to eq(valid_attributes[:name])
       expect(new_event.event_info.venue).to eq(valid_attributes[:venue])
-      expect(response).to redirect_to(event_path(new_event)) # Adjust the path as necessary
+      expect(response).to redirect_to(eventdashboard_path) # Adjust the path as necessary
     end
   end
 end
