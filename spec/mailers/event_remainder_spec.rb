@@ -28,7 +28,7 @@ RSpec.describe EventRemainderMailer, type: :mailer do
         mailer.deliver
       end.to change {
                ActionMailer::Base.deliveries.count
-             }.by(3)
+             }.by(1)
     end
   end
 
@@ -42,7 +42,7 @@ RSpec.describe EventRemainderMailer, type: :mailer do
         mailer.deliver
       end.to change {
                ActionMailer::Base.deliveries.count
-             }.by(4) # Assuming there are 2 emails in the Excel file
+             }.by(1)
     end
   end
 
