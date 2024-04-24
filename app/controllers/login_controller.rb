@@ -23,12 +23,12 @@ class LoginController < ApplicationController
   def login
     if params[:commit] == 'Continue without signing in'
       session[:user_email] = 'Not Signed In'
-      redirect_to dashboard_path # Redirect to dashboard without logging in
+      redirect_to eventdashboard_path # Redirect to dashboard without logging in
     else
       @user = User.find_by(email: params[:email])
       if @user && @user.authenticate(params[:password])
         session[:user_email] = @user.email
-        redirect_to dashboard_path # Redirect to dashboard after successful login
+        redirect_to eventdashboard_path # Redirect to dashboard after successful login
       else
         flash.now[:error] = 'Invalid email or password'
         render 'new' # Render the login page again with an error message

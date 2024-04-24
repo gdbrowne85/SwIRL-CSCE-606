@@ -82,4 +82,120 @@ RSpec.describe CalendarsController, type: :controller do
       end
     end
   end
+
+  describe 'POST #create_event' do
+    let(:event) { create(:event) }
+    let(:event_info) { create(:event_info, event:) }
+    let(:fake_service) { instance_double(Google::Apis::CalendarV3::CalendarService) }
+    let!(:time_slots) do
+      [
+        create(:time_slot, event:, date: Date.today, start_time: '09:00', end_time: '10:00'),
+        create(:time_slot, event:, date: Date.today, start_time: '11:00', end_time: '12:00')
+      ]
+    end
+    let(:attendees) do
+      [
+        create(:attendee_info, event:, email: 'attendee1@example.com', is_attending: 'yes'),
+        create(:attendee_info, event:, email: 'attendee2@example.com', is_attending: 'no')
+      ]
+    end
+
+
+    # before do
+    #   session[:authorization] = { access_token: 'token' }
+    #   allow_any_instance_of(Google::Apis::CalendarV3::CalendarService).to receive(:insert_event).and_return(true)
+    # end
+    before do
+      allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(fake_service)
+      allow(fake_service).to receive(:authorization=) # Allow setting authorization
+      allow(fake_service).to receive(:insert_event).and_return(true) # Stubbing the insert event
+    end
+
+    # it 'creates events in Google Calendar for each time slot' do
+    #   expect do
+    #     post :create_event, params: { id: event.id }
+    #     # expect(flash[:notice]).to eq('Series event added successfully!')
+    #   end.to change { flash[:notice] }.to('Series event added successfully!')
+    #   # end
+    # end
+
+    it 'formats time correctly for Google Calendar events' do
+      fake_service = instance_double(Google::Apis::CalendarV3::CalendarService)
+      allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(fake_service)
+      allow(fake_service).to receive(:insert_event) do |_calendar_id, new_event, _options|
+        expect(new_event.start.date_time).to match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/)
+        expect(new_event.end.date_time).to match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/)
+      end
+
+      post :create_event, params: { id: event.id }
+    end
+
+    it 'assigns the correct attendees to the event' do
+      fake_service = instance_double(Google::Apis::CalendarV3::CalendarService)
+      allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(fake_service)
+      allow(fake_service).to receive(:insert_event) do |_calendar_id, new_event, _options|
+        expect(new_event.attendees.count).to eq(2)
+        expect(new_event.attendees.map(&:email)).to match_array(['attendee1@example.com', 'attendee2@example.com'])
+        expect(new_event.attendees.map(&:response_status)).to contain_exactly('accepted', 'needsAction')
+      end
+
+      post :create_event, params: { id: event.id }
+    end
+  end
+
+  describe 'POST #create_event' do
+    let(:event) { create(:event) }
+    let(:event_info) { create(:event_info, event: event) }
+    let!(:time_slots) do
+      create_list(:time_slot, 2, event: event, date: Date.today, start_time: '09:00', end_time: '10:00')
+    end
+    let!(:attendee_info) { create(:attendee_info, event: event, email: 'attendee@example.com', name: 'Attendee One', is_attending: 'yes') }
+
+    before do
+
+      allow(controller).to receive(:authorized?).and_return(true)
+      session[:authorization] = { access_token: 'fake_token' }
+      signet_double = instance_double(Signet::OAuth2::Client)
+      allow(Signet::OAuth2::Client).to receive(:new).and_return(signet_double)
+      allow(signet_double).to receive(:update!).and_return(true)
+      
+      @service_double = instance_double(Google::Apis::CalendarV3::CalendarService)
+      allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(@service_double)
+      allow(@service_double).to receive(:authorization=)
+      allow(@service_double).to receive(:insert_event).and_return(Google::Apis::CalendarV3::Event.new(id: 'new_event_id'))
+    end
+
+    it 'creates Google Calendar events for each time slot and assigns attendees correctly' do
+      expect(@service_double).to receive(:insert_event).twice
+
+      post :create_event, params: { id: event.id }
+
+      expect(flash[:notice]).to eq('Series event added successfully!')
+      expect(response).to redirect_to(eventsList_url)
+    end
+  end
+
+  describe 'POST #create_event' do
+    let(:event) { create(:event) }
+    
+    before do
+      allow(controller).to receive(:authorized?).and_return(true)
+      session[:authorization] = { access_token: 'fake_token' }
+      @service_double = instance_double(Google::Apis::CalendarV3::CalendarService)
+      allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(@service_double)
+      allow(@service_double).to receive(:authorization=)
+    end
+
+    context 'when Google API raises an error' do
+      before do
+        allow(@service_double).to receive(:insert_event).and_raise(Google::Apis::Error.new("Something went wrong"))
+      end
+
+      it 'rescues the Google::Apis::Error and redirects to the redirect path' do
+        post :create_event, params: { id: event.id }
+        expect(response).to redirect_to(redirect_path)
+      end
+    end
+  end 
+
 end
