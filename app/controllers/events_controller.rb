@@ -327,7 +327,7 @@ class EventsController < ApplicationController
   
 
   def number_of_emails_sent
-    attendee_infos.where(email_sent: true).count
+    @event.attendee_infos.where(email_sent: true).count
   end
 
   def send_reminders_to_no_response_attendees
