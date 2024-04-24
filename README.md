@@ -209,3 +209,7 @@ Create a key to run SMTP using the below commands.
 # Login:
 
 User creation functionality is now live.  Create a user id to login, or click on "Continue without signing in" if you do not wish to create a user id.
+
+# Test Files
+
+The demo CSV or Excel files are provided in the test_files folder. The files can be used for creating single or series event.

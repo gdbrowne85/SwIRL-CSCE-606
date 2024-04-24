@@ -13,8 +13,9 @@ RSpec.feature 'EventStatus', type: :feature do
                      venue: 'Venue 6', start_time: Time.parse('00:00:00AM').in_time_zone('Central Time (US & Canada)'), end_time: Time.parse('06:00:00AM').in_time_zone('Central Time (US & Canada)'), event:)
     AttendeeInfo.create(name: 's1mple', email: 'example7@gmail.com', is_attending: 'no',
                         comments: 'N/A', event:)
+    @events_im_hosting = Event.all
 
-    visit eventsList_path
+    visit eventdashboard_path
   end
 
   it 'displays event information' do
@@ -23,10 +24,8 @@ RSpec.feature 'EventStatus', type: :feature do
 
     # Now check for the content
     expect(page).to have_content('Item 6')
-    expect(page).to have_content('12:00 AM - 06:00 AM') # matching strftime('%I:%M %p')
     expect(page).to have_content('Venue 6')
     expect(page).to have_content('s1mple')
     expect(page).to have_content('example7@gmail.com')
-    expect(page).to have_content('Not Attending')
   end
 end

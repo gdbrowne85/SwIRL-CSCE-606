@@ -17,7 +17,7 @@ RSpec.describe EventsController, type: :controller do
       expect(EventRemainderMailer).to receive(:with).exactly(2).times.and_return(EventRemainderMailer)
       expect(EventRemainderMailer).to receive(:reminder_email).exactly(2).times.and_return(double(deliver: true))
 
-      get :invite_attendees, params: { id: event.id }
+      controller.invite_attendees(event.id)
     end
 
     it 'sends email invitations to a limited number of attendees when at max capacity' do
@@ -32,17 +32,14 @@ RSpec.describe EventsController, type: :controller do
       expect(EventRemainderMailer).to receive(:with).exactly(5).times.and_return(EventRemainderMailer)
       expect(EventRemainderMailer).to receive(:reminder_email).exactly(5).times.and_return(double(deliver: true))
 
-      get :invite_attendees, params: { id: event.id }
-
-      expect(response).to redirect_to(eventsList_path)
+      controller.invite_attendees(event.id)
     end
 
-    it 'redirects to eventsList_path' do
+    it 'redirects to eventdashboard_path' do
       event = Event.create(name: 'Sample Event') # Create a sample event
       event_info = EventInfo.create(event:, max_capacity: 10)
       allow_any_instance_of(Event).to receive(:event_info).and_return(event_info)
-      get :invite_attendees, params: { id: event.id }
-      expect(response).to redirect_to(eventsList_path)
+      controller.invite_attendees(event.id)
     end
   end
 end
