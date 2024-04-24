@@ -171,7 +171,18 @@ class EventsController < ApplicationController
     user_email = session[:user_email]
 
     # Events the user is hosting
-    @events_im_hosting = Event.where(created_by: user_email)
+    @events_im_hosting = Event.includes(:attendee_infos).where(created_by: user_email)
+
+    # Add the Yes/No counts efficiently via ActiveRecord queries
+    @events_im_hosting = @events_im_hosting.map do |event|
+      event.define_singleton_method(:yes_count) do
+        event.attendee_infos.where(status: 'replied_attending').count
+      end
+      event.define_singleton_method(:no_count) do
+        event.attendee_infos.where(status: 'replied_not_attending').count
+      end
+      event
+    end
 
     # Events the user is invited to
     @events_im_invited_to = Event.joins(:attendee_infos)
@@ -205,7 +216,8 @@ class EventsController < ApplicationController
     end
 
     # Good path, time_slot doesn't belong to anyone and attendee doesn't already have a time_slot they have selected
-    @attendee_info.update!(is_attending: 'yes')
+    @attendee_info.update(is_attending: 'yes')
+    @attendee_info.update(status: :replied_attending)
     @time_slot.update!(attendee_info_id: @attendee_info.id)
 
     redirect_to event_url(@event), notice: 'Your response has been recorded'
@@ -216,6 +228,7 @@ class EventsController < ApplicationController
     @attendee_info = @event.attendee_infos.find_by(email_token: params[:token])
 
     if @event.present? && @attendee_info.present?
+      @attendee_info.update(is_attending: 'yes')
       @attendee_info.update(status: :replied_attending)
 
       inviter_email = session[:user_email]
@@ -234,6 +247,7 @@ class EventsController < ApplicationController
     @attendee_info = @event.attendee_infos.find_by(email_token: params[:token])
 
     if @event.present? && @attendee_info.present?
+      @attendee_info.update(is_attending: 'no')
       @attendee_info.update(status: :replied_not_attending)
       # if @event.present? && @attendee_info.present?
 
@@ -313,7 +327,7 @@ class EventsController < ApplicationController
   
 
   def number_of_emails_sent
-    attendee_infos.where(email_sent: true).count
+    @event.attendee_infos.where(email_sent: true).count
   end
 
   def send_reminders_to_no_response_attendees

@@ -29,6 +29,7 @@ class LoginController < ApplicationController
       if @user && @user.authenticate(params[:password])
         session[:user_email] = @user.email
         redirect_to home_path # Redirect to dashboard after successful login
+
       else
         flash.now[:error] = 'Invalid email or password'
         render 'new' # Render the login page again with an error message

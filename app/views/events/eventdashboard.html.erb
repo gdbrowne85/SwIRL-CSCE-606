@@ -206,7 +206,6 @@
                         <h4>Speaker Series</h4>
                         <% end %>
                         <h4>Location: <%= event.event_info&.venue %></h4>
-                        <h4>Yes/No Ratio: <span id="yes-count-<%= event.id %>">0</span> / <span id="no-count-<%= event.id %>">0</span></h4>
                         <% if event.time_slots&.blank? %>
                         <h4 class="event-col"><strong>Max Capacity:</strong> <%= event.event_info&.max_capacity %></h4>
                         <% end %>
@@ -242,6 +241,10 @@
                             <% end %>
                         </h4>
                     <% end %>
+
+                        <h4>Yes/No Ratio: <span id="yes-count-<%= event.id %>"><%= event.yes_count %></span> / <span id="no-count-<%= event.id %>"><%= event.no_count %></span></h4>
+                        
+
                         
                         <h4>Attendees:</h4>
                             <ul class="list-unstyled">
