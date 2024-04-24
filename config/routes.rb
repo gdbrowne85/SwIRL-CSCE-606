@@ -96,4 +96,5 @@ Rails.application.routes.draw do
   get 'login', to: 'login#new', as: :login
   post 'login', to: 'login#create'
   get '/static_pages/home', to: 'static_pages#home'
+  post 'logout', to: 'login#logout', as: 'logout'
 end

@@ -162,6 +162,12 @@
             <div class="navbar-email">
                 <%= session[:user_email] if session[:user_email] %>
             </div>
+            <% if session[:user_email] %>
+            <form action="<%= logout_path %>" method="post">
+                <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+                <button type="submit" style="background-color: black; color: white; border: 2px solid white;">Logout</button>
+            </form>
+            <% end %>
         </div>
     </nav>
     <div class="event-card">

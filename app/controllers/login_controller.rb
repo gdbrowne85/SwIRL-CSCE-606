@@ -35,4 +35,12 @@ class LoginController < ApplicationController
       end
     end
   end    
+
+  def logout
+    reset_session  # Clear the session to ensure user is logged out
+    redirect_to signin_path, notice: 'You have been successfully logged out.'  # Redirect to login page with a notice
+  end
 end
+
+  
+
