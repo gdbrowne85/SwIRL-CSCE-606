@@ -4,7 +4,7 @@ Given('I am on the home page') do
   visit('/home')
 end
 
-When('I click on the {string} button') do |button_text|
+When('I click on the {string}') do |button_text|
   click_button(button_text)
 end
 

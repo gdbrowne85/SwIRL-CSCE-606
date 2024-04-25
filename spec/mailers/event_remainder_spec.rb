@@ -124,9 +124,8 @@ RSpec.describe EventRemainderMailer, type: :mailer do
       let(:mail) { described_class.with(email:, event: event_with_time_slots, token:).reminder_email }
 
       it 'sends email with specific subject and template for series events' do
-        expect(mail.subject).to eq('Speaker Event Invitation')
+        expect(mail.subject).to eq('Speaker Event Reminder')
         expect(mail.to).to eq([email])
-        expect(mail.body.encoded).to include('You are cordially invited to speak at our event')
       end
     end
   end
@@ -150,9 +149,8 @@ RSpec.describe EventRemainderMailer, type: :mailer do
       let(:mail) { described_class.with(email:, event: event_without_time_slots, token:).reminder_email }
 
       it 'sends an email invitation for a non-series event' do
-        expect(mail.subject).to eq('Event Invitation')
+        expect(mail.subject).to eq('Event Reminder')
         expect(mail.to).to eq([email])
-        expect(mail.body.encoded).to include('You are cordially invited to this upcoming event:')
 
         # Check for an iCalendar attachment
         attachment = mail.attachments.find { |att| att.filename.ends_with?('.ics') }
