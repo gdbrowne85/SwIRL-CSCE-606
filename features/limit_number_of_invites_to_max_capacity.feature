@@ -16,7 +16,7 @@ Feature: Limit number of invitations sent to the max capacity
       | Event End Time   | 20:09       |
       | Max Capacity     | 10         |
     And I submit the event creation form
-    Given I created an event and I click on the "Status" link
+    Then I should be on the "Event Dashboard" page
     Then I should be on the "Event Dashboard" page
     And I click on "Lecture" event
     Then I extract the max capacity of "Lecture"
