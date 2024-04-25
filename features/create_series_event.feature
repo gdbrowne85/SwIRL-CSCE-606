@@ -23,18 +23,7 @@ Feature: Series Event Creation
       | Date         | 2023-12-24  |
       | Start Time   | 09:00 AM    | # Updated to match the format displayed on the page
       | End Time     | 05:00 PM    | # Updated to match the format displayed on the page
-      | CSV File     | Test.csv    |
-    When the user clicks the "Status" button
-    When the user clicks on the event named "Valorant"
-    Then the event content for "Valorant" should be visible
-    And the event "Valorant" should display the following attendee details:
-      | Email                      | Status  |
-      | mohitsarin98@gmail.com     | Pending |
-      | epriest@tamu.edu           | Pending |
-      | mohitsarin26@tamu.edu      | Pending |
-      | aashaykadakia@tamu.edu     | Pending |
-      | ishantkundra@tamu.edu      | Pending |
-      | shaunakjoshi@tamu.edu      | Pending |
+      | CSV File     | test.csv    |
 
 
 

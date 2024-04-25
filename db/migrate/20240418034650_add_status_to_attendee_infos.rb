@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddStatusToAttendeeInfos < ActiveRecord::Migration[7.0]
   def change
     add_column :attendee_infos, :status, :integer, default: 1
