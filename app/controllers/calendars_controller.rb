@@ -16,7 +16,7 @@ class CalendarsController < ApplicationController
 
     session[:authorization] = response
 
-    redirect_to eventsList_url
+    redirect_to eventdashboard_path
   end
 
   def create_event
@@ -83,7 +83,7 @@ class CalendarsController < ApplicationController
 
           flash[:notice] = 'Event added successfully!'
         end 
-        redirect_to eventsList_url
+        redirect_to eventdashboard_path
 
       rescue Google::Apis::Error
         redirect_to redirect_path
