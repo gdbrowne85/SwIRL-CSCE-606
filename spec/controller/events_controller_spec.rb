@@ -116,7 +116,7 @@ RSpec.describe EventsController, type: :controller do
     it 'updates attendee_info to yes and redirects' do
       get :yes_response, params: { id: event.id, token: 'token123' }
       attendee_info.reload
-      expect(attendee_info.is_attending).to eq('yes')
+      expect(attendee_info.status).to eq('replied_attending')
       expect(response).to redirect_to(event_url(event))
       expect(flash[:notice]).to eq('Your response has been recorded')
     end
@@ -126,7 +126,7 @@ RSpec.describe EventsController, type: :controller do
     it 'updates attendee_info to no and redirects' do
       get :no_response, params: { id: event.id, token: 'token123' }
       attendee_info.reload
-      expect(attendee_info.is_attending).to eq('no')
+      expect(attendee_info.status).to eq('replied_not_attending')
       expect(response).to redirect_to(event_url(event))
       # expect(response).to redirect_to(events_url)
       expect(flash[:notice]).to eq('Your response has been recorded')
@@ -323,7 +323,7 @@ RSpec.describe EventsController, type: :controller do
   describe 'GET #invite_attendees' do
     before do
       # Setup for the test. Adjust as per your model associations and requirements.
-      allow(Event).to receive(:find).with(event.id.to_s).and_return(event)
+      allow(Event).to receive(:find).with(event.id).and_return(event)
       allow(event).to receive(:event_info).and_return(event_info)
       allow(EventRemainderMailer).to receive_message_chain(:with, :reminder_email, :deliver)
     end
@@ -331,30 +331,23 @@ RSpec.describe EventsController, type: :controller do
     context 'when max_capacity is present' do
       before do
         allow(event_info).to receive(:max_capacity).and_return(1)
-        get :invite_attendees, params: { id: event.id }
+        controller.invite_attendees(event.id)
       end
 
       it 'sends emails up to the max capacity' do
         expect(EventRemainderMailer).to have_received(:with).exactly(1).times
       end
 
-      it 'redirects to events list' do
-        expect(response).to redirect_to(eventsList_path)
-      end
     end
 
     context 'when max_capacity is not present' do
       before do
         allow(event_info).to receive(:max_capacity).and_return(nil)
-        get :invite_attendees, params: { id: event.id }
+        controller.invite_attendees(event.id)
       end
 
       it 'sends emails to all attendees' do
         expect(EventRemainderMailer).to have_received(:with).at_least(:once)
-      end
-
-      it 'redirects to events list' do
-        expect(response).to redirect_to(eventsList_path)
       end
     end
   end
@@ -369,7 +362,7 @@ RSpec.describe EventsController, type: :controller do
       expect do
         post :create, params: { event: valid_attributes }
       end.to change(Event, :count).by(1)
-      expect(response).to redirect_to(event_url(Event.last))
+      expect(response).to redirect_to(eventdashboard_path)
       expect(flash[:notice]).to eq('Event was successfully created.')
     end
   end
@@ -386,8 +379,6 @@ RSpec.describe EventsController, type: :controller do
       max_capacity: 20
     }
   end
-
-  # excel_file = Rails.root.join('spec', 'fixtures', 'test_emails.xlsx')
 
   let(:excel_file) do
     fixture_file_upload(Rails.root.join('spec', 'fixtures', 'test_attendees.xlsx'),
@@ -407,7 +398,80 @@ RSpec.describe EventsController, type: :controller do
       new_event = Event.last
       expect(new_event.name).to eq(valid_attributes[:name])
       expect(new_event.event_info.venue).to eq(valid_attributes[:venue])
-      expect(response).to redirect_to(event_path(new_event)) # Adjust the path as necessary
+      expect(response).to redirect_to(eventdashboard_path) # Adjust the path as necessary
+    end
+  end
+
+  describe 'GET #edit' do
+    context 'when the event has time slots' do
+      before do
+        # Assume that TimeSlot is an associated model with Event
+        create(:time_slot, event: event)
+        get :edit, params: { id: event.id }
+      end
+
+      it 'renders the series_event template' do
+        expect(response).to render_template('series_event')
+      end
+    end
+
+    context 'when the event has no time slots' do
+      before do
+        get :edit, params: { id: event.id }
+      end
+
+      it 'does not render the series_event template' do
+        expect(response).not_to render_template('series_event')
+      end
+    end
+  end
+
+  describe '#send_reminders_to_no_response_attendees' do
+    let(:event) { create(:event) }
+    let(:event_info) { create(:event_info, event: event, reminder_time: 1.hour.ago) }
+    let!(:attendee) { create(:attendee_info, event: event, is_attending: nil, email_sent: true, reminder_email_sent: false) }
+
+    it 'sends a reminder email to non-responding attendees who have been previously contacted' do
+      allow(EventInfo).to receive(:where).and_return([event_info])
+      allow(EventRemainderMailer).to receive_message_chain(:with, :reminder_email, :deliver).and_return(true)
+
+      controller.send_reminders_to_no_response_attendees
+
+      expect(EventRemainderMailer).to have_received(:with).with(hash_including(email: attendee.email)).once
+      expect(attendee.reload.reminder_email_sent).to be true
+    end
+  end
+
+  describe '#send_reminders_to_attendees' do
+    let(:event) { create(:event) }
+    let(:event_info) { create(:event_info, event: event, reminder_time: 1.hour.ago) }
+    let!(:attendee) { create(:attendee_info, event: event, is_attending: 'yes', email_sent: true, reminder_email_sent: false) }
+
+    it 'sends a reminder email to attendees who accepted but have not been reminded' do
+      allow(EventInfo).to receive(:where).and_return([event_info])
+      allow(EventRemainderMailer).to receive_message_chain(:with, :event_reminder, :deliver).and_return(true)
+
+      controller.send_reminders_to_attendees
+
+      expect(EventRemainderMailer).to have_received(:with).with(hash_including(email: attendee.email)).once
+      expect(attendee.reload.reminder_email_sent).to be true
+    end
+  end
+
+  describe '#number_of_emails_sent' do
+    let(:event) { create(:event) }
+    let!(:attendees) do
+      create_list(:attendee_info, 3, event: event, email_sent: true)
+      create_list(:attendee_info, 2, event: event, email_sent: false)  # These should not be counted
+    end
+
+    before do
+      # Ensure the controller has an instance variable @event set, as expected by your method implementation
+      controller.instance_variable_set(:@event, event)
+    end
+
+    it 'returns the number of emails sent' do
+      expect(controller.number_of_emails_sent).to eq(3)
     end
   end
 end
