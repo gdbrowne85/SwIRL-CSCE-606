@@ -26,7 +26,7 @@ class LoginController < ApplicationController
       redirect_to home_path # Redirect to dashboard without logging in
     else
       @user = User.find_by(email: params[:email])
-      if @user && @user.authenticate(params[:password])
+      if @user&.authenticate(params[:password])
         session[:user_email] = @user.email
         redirect_to home_path # Redirect to dashboard after successful login
 
@@ -35,10 +35,10 @@ class LoginController < ApplicationController
         render 'new' # Render the login page again with an error message
       end
     end
-  end    
+  end
 
   def logout
-    reset_session  # Clear the session to ensure user is logged out
+    reset_session # Clear the session to ensure user is logged out
     redirect_to signin_path, notice: 'You have been successfully logged out.'  # Redirect to login page with a notice
   end
 end
