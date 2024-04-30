@@ -52,13 +52,13 @@ class CalendarsController < ApplicationController
               end
               new_event.attendees = attendees
             end
-
+    
             calendar_id = params[:calendar_id] || 'primary'
             service.insert_event(calendar_id, new_event)
-
+    
             flash[:notice] = 'Series event added successfully!'
           end
-        else
+        else 
           start_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.start_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
           end_datetime = DateTime.parse("#{@event_info.date}T#{@event_info.end_time}:00").strftime('%Y-%m-%dT%H:%M:%S.%LZ')
 
@@ -73,7 +73,7 @@ class CalendarsController < ApplicationController
             attendees = []
             @event.attendee_infos.each do |attendee_info|
               attendees << Google::Apis::CalendarV3::EventAttendee.new(email: attendee_info.email,
-                                                                       display_name: attendee_info.name, response_status: attendee_info.is_attending == 'yes' ? 'accepted' : 'needsAction')
+                                                                      display_name: attendee_info.name, response_status: attendee_info.is_attending == 'yes' ? 'accepted' : 'needsAction')
             end
             new_event.attendees = attendees
           end
@@ -82,8 +82,9 @@ class CalendarsController < ApplicationController
           service.insert_event(calendar_id, new_event)
 
           flash[:notice] = 'Event added successfully!'
-        end
+        end 
         redirect_to eventsList_url
+
       rescue Google::Apis::Error
         redirect_to redirect_path
       end
