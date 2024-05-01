@@ -18,7 +18,7 @@ RSpec.describe CalendarsController, type: :controller do
     it 'stores the authorization response in the session and redirects' do
       get :callback, params: { code: 'authorization_code' }
       expect(session[:authorization]).to eq({ access_token: 'token' })
-      expect(response).to redirect_to(eventsList_url)
+      expect(response).to redirect_to(eventdashboard_path)
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe CalendarsController, type: :controller do
       it 'adds the event successfully and redirects' do
         post :create_event, params: { id: 1 }
         expect(flash[:notice]).to eq('Event added successfully!')
-        expect(response).to redirect_to(eventsList_url)
+        expect(response).to redirect_to(eventdashboard_path)
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe CalendarsController, type: :controller do
         post :create_event, params: { id: event.id }
         # Assertions about the response or effects (like flash messages) go here
         expect(flash[:notice]).to eq('Event added successfully!')
-        expect(response).to redirect_to(eventsList_url)
+        expect(response).to redirect_to(eventdashboard_path)
       end
     end
   end
@@ -171,7 +171,7 @@ RSpec.describe CalendarsController, type: :controller do
       post :create_event, params: { id: event.id }
 
       expect(flash[:notice]).to eq('Series event added successfully!')
-      expect(response).to redirect_to(eventsList_url)
+      expect(response).to redirect_to(eventdashboard_path)
     end
   end
 
