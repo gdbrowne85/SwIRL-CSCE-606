@@ -100,7 +100,6 @@ RSpec.describe CalendarsController, type: :controller do
       ]
     end
 
-
     # before do
     #   session[:authorization] = { access_token: 'token' }
     #   allow_any_instance_of(Google::Apis::CalendarV3::CalendarService).to receive(:insert_event).and_return(true)
@@ -145,20 +144,21 @@ RSpec.describe CalendarsController, type: :controller do
 
   describe 'POST #create_event' do
     let(:event) { create(:event) }
-    let(:event_info) { create(:event_info, event: event) }
+    let(:event_info) { create(:event_info, event:) }
     let!(:time_slots) do
-      create_list(:time_slot, 2, event: event, date: Date.today, start_time: '09:00', end_time: '10:00')
+      create_list(:time_slot, 2, event:, date: Date.today, start_time: '09:00', end_time: '10:00')
     end
-    let!(:attendee_info) { create(:attendee_info, event: event, email: 'attendee@example.com', name: 'Attendee One', is_attending: 'yes') }
+    let!(:attendee_info) do
+      create(:attendee_info, event:, email: 'attendee@example.com', name: 'Attendee One', is_attending: 'yes')
+    end
 
     before do
-
       allow(controller).to receive(:authorized?).and_return(true)
       session[:authorization] = { access_token: 'fake_token' }
       signet_double = instance_double(Signet::OAuth2::Client)
       allow(Signet::OAuth2::Client).to receive(:new).and_return(signet_double)
       allow(signet_double).to receive(:update!).and_return(true)
-      
+
       @service_double = instance_double(Google::Apis::CalendarV3::CalendarService)
       allow(Google::Apis::CalendarV3::CalendarService).to receive(:new).and_return(@service_double)
       allow(@service_double).to receive(:authorization=)
@@ -177,7 +177,7 @@ RSpec.describe CalendarsController, type: :controller do
 
   describe 'POST #create_event' do
     let(:event) { create(:event) }
-    
+
     before do
       allow(controller).to receive(:authorized?).and_return(true)
       session[:authorization] = { access_token: 'fake_token' }
@@ -188,7 +188,7 @@ RSpec.describe CalendarsController, type: :controller do
 
     context 'when Google API raises an error' do
       before do
-        allow(@service_double).to receive(:insert_event).and_raise(Google::Apis::Error.new("Something went wrong"))
+        allow(@service_double).to receive(:insert_event).and_raise(Google::Apis::Error.new('Something went wrong'))
       end
 
       it 'rescues the Google::Apis::Error and redirects to the redirect path' do
@@ -196,6 +196,5 @@ RSpec.describe CalendarsController, type: :controller do
         expect(response).to redirect_to(redirect_path)
       end
     end
-  end 
-
+  end
 end

@@ -8,14 +8,14 @@ ruby '3.2.2'
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'aws-sdk-rails'
 gem 'bootsnap', require: false # Reduces boot times through caching; required in config/boot.rb
+gem 'google-apis-calendar_v3', '~> 0.33.0'
 gem 'importmap-rails'
 gem 'jbuilder'
+gem 'particles-js-rails'
 gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.8'
 gem 'rake', '13.1.0'
 gem 'roo', '~> 2.10.1'
-gem 'particles-js-rails'
-gem 'google-apis-calendar_v3', '~> 0.33.0'
 gem 'signet', '~> 0.16.0'
 gem 'sprockets-rails' # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'stimulus-rails'
@@ -61,5 +61,6 @@ group :test do
   gem 'rspec'
   gem 'selenium-webdriver'
   gem 'simplecov', require: false
+  gem 'timecop'
   gem 'webdrivers'
 end

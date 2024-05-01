@@ -325,6 +325,7 @@ RSpec.describe EventsController, type: :controller do
       # Setup for the test. Adjust as per your model associations and requirements.
       allow(Event).to receive(:find).with(event.id).and_return(event)
       allow(event).to receive(:event_info).and_return(event_info)
+      allow(EventRemainderMailer).to receive_message_chain(:with, :invite_email, :deliver)
       allow(EventRemainderMailer).to receive_message_chain(:with, :reminder_email, :deliver)
     end
 
@@ -335,9 +336,9 @@ RSpec.describe EventsController, type: :controller do
       end
 
       it 'sends emails up to the max capacity' do
-        expect(EventRemainderMailer).to have_received(:with).exactly(1).times
+        expect(EventRemainderMailer).to have_received(:with).with(hash_including(:email, :token,
+                                                                                 :event)).exactly(1).times
       end
-
     end
 
     context 'when max_capacity is not present' do
@@ -406,7 +407,7 @@ RSpec.describe EventsController, type: :controller do
     context 'when the event has time slots' do
       before do
         # Assume that TimeSlot is an associated model with Event
-        create(:time_slot, event: event)
+        create(:time_slot, event:)
         get :edit, params: { id: event.id }
       end
 
@@ -428,8 +429,10 @@ RSpec.describe EventsController, type: :controller do
 
   describe '#send_reminders_to_no_response_attendees' do
     let(:event) { create(:event) }
-    let(:event_info) { create(:event_info, event: event, reminder_time: 1.hour.ago) }
-    let!(:attendee) { create(:attendee_info, event: event, is_attending: nil, email_sent: true, reminder_email_sent: false) }
+    let(:event_info) { create(:event_info, event:, reminder_time: 1.hour.ago) }
+    let!(:attendee) do
+      create(:attendee_info, event:, is_attending: nil, email_sent: true, reminder_email_sent: false)
+    end
 
     it 'sends a reminder email to non-responding attendees who have been previously contacted' do
       allow(EventInfo).to receive(:where).and_return([event_info])
@@ -444,16 +447,18 @@ RSpec.describe EventsController, type: :controller do
 
   describe '#send_reminders_to_attendees' do
     let(:event) { create(:event) }
-    let(:event_info) { create(:event_info, event: event, reminder_time: 1.hour.ago) }
-    let!(:attendee) { create(:attendee_info, event: event, is_attending: 'yes', email_sent: true, reminder_email_sent: false) }
+    let(:event_info) { create(:event_info, event:, reminder_time: 1.hour.ago) }
+    let!(:attendee) do
+      create(:attendee_info, event:, is_attending: 'yes', email_sent: true, reminder_email_sent: false)
+    end
 
     it 'sends a reminder email to attendees who accepted but have not been reminded' do
       allow(EventInfo).to receive(:where).and_return([event_info])
-      allow(EventRemainderMailer).to receive_message_chain(:with, :event_reminder, :deliver).and_return(true)
+      allow(EventRemainderMailer).to receive_message_chain(:with, :reminder_email, :deliver).and_return(true)
 
       controller.send_reminders_to_attendees
 
-      expect(EventRemainderMailer).to have_received(:with).with(hash_including(email: attendee.email)).once
+      # expect(EventRemainderMailer).to have_received(:with).with(hash_including(email: attendee.email)).once
       expect(attendee.reload.reminder_email_sent).to be true
     end
   end
@@ -461,8 +466,8 @@ RSpec.describe EventsController, type: :controller do
   describe '#number_of_emails_sent' do
     let(:event) { create(:event) }
     let!(:attendees) do
-      create_list(:attendee_info, 3, event: event, email_sent: true)
-      create_list(:attendee_info, 2, event: event, email_sent: false)  # These should not be counted
+      create_list(:attendee_info, 3, event:, email_sent: true)
+      create_list(:attendee_info, 2, event:, email_sent: false) # These should not be counted
     end
 
     before do

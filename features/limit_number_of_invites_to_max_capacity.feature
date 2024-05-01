@@ -7,7 +7,7 @@ Feature: Limit number of invitations sent to the max capacity
     Given I am on the home page
 
   Scenario Outline: Limit invitations to event's max capacity
-    When I click on the "Create singular event" button
+    When I click on the "Create singular event"
     And I fill in the event creation form with the following data:
       | Event Name       | Lecture   |
       | Event Venue      | Zachery     |
@@ -16,7 +16,7 @@ Feature: Limit number of invitations sent to the max capacity
       | Event End Time   | 20:09       |
       | Max Capacity     | 10         |
     And I submit the event creation form
-    Given I created an event and I click on the "Status" link
+    Then I should be on the "Event Dashboard" page
     Then I should be on the "Event Dashboard" page
     And I click on "Lecture" event
     Then I extract the max capacity of "Lecture"
